@@ -2,17 +2,21 @@ import React, { useState } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 import UserContext from '../contexts/UserContext';
+import Signup from './login/sign-up';
+
 
 export default function App() {
     const [userInfo, setUserInfo] = useState({});
 
     return (
-        <UserContext.Provider value={userInfo}>
+        <UserContext.Provider value={userInfo, setUserInfo}>
             <GlobalStyle/>
             <BrowserRouter>
                 <Switch>
                     <Route path="/" exact></Route>
-                    <Route path="/sign-up"></Route>
+                    <Route path="/sign-up">
+                    <Signup/>
+                    </Route>
                     <Route path="/timeline"></Route>
                     <Route path="/my-posts"></Route>
                     <Route path="/my-likes"></Route>
