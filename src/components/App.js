@@ -8,7 +8,7 @@ export default function App() {
     const [userInfo, setUserInfo] = useState({});
 
     return (
-        <UserContext.Provider value={userInfo}>
+        <UserContext.Provider value={{ userInfo, setUserInfo }}>
             <GlobalStyle />
             <BrowserRouter>
                 <Switch>

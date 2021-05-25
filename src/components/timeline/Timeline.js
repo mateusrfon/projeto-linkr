@@ -71,6 +71,10 @@ export default function Timeline() {
         promise.then((response) => {
             setData(response.data);
         });
+
+        promise.catch((error) => {
+            alert("Houve um erro por favor recarregue a pagina")
+        })
     }
 
     useEffect(() => {

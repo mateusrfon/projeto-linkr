@@ -5,6 +5,14 @@ import { useState } from 'react';
 export default function Posts({ posts }) {
     const [wasLiked, setWasLiked] = useState(false);
 
+    if (posts.length === 0) {
+        return <li>Nenhuma mensagem encontrada</li>;
+    }
+
+    function newTab(link) {
+        window.open(link, '_blank');
+    }
+
     return (
         <PostsList>
             {posts.map((post) => {
@@ -37,7 +45,12 @@ export default function Posts({ posts }) {
                                 {post.user.username}
                             </div>
                             <div className="text">{post.text}</div>
-                            <Button img={post.linkImage}>
+                            <Button
+                                img={post.linkImage}
+                                onClick={() => {
+                                    newTab(post.link);
+                                }}
+                            >
                                 <div className="link-title">
                                     {post.linkTitle}
                                 </div>
@@ -56,9 +69,11 @@ export default function Posts({ posts }) {
 
 const PostsList = styled.ul`
     color: white;
+    font-family: 'Lato', sans-serif;
     li {
-        width: 43%;
-        height: 276px;
+        width: 45%;
+        min-height: 276px;
+        height: auto;
         margin-top: 30px;
         border-radius: 16px;
         background-color: #171717;
@@ -85,17 +100,32 @@ const PostsList = styled.ul`
         word-break: break-all;
     }
 
-    @media (max-width: 700px) {
+    .author-name {
+        font-size: 19px;
+    }
+
+    .text {
+        color: #b7b7b7;
+    }
+
+    .description {
+        color: #9b9595;
+    }
+
+    .link-title {
+        font-size: 16px;
+    }
+
+    .link-title,
+    .url {
+        color: #cecece;
+    }
+
+    @media (max-width: 1100px) {
         li {
             width: 100%;
         }
 
-        button {
-            width: 280px;
-        }
-    }
-
-    @media (max-width: 1100px) {
         button {
             width: auto;
         }
@@ -109,15 +139,17 @@ const Button = styled.button`
     outline: none;
     margin-top: 10px;
     border: 1px solid #4d4d4d;
-    height: 155px;
+    height: auto;
+    min-height: 155px;
     width: 90%;
     background-image: ${({ img }) => `url(${img})`};
     background-repeat: no-repeat;
-    background-size: 35% 100%;
+    background-size: 40% 100%;
     background-position: right;
+    cursor: pointer;
 
     div {
-        width: 60%;
+        width: 55%;
         text-align: left;
         margin-left: 15px;
     }
