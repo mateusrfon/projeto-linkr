@@ -3,15 +3,19 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 import UserContext from '../contexts/UserContext';
 
+import Post from './timeline/Post';
 export default function App() {
     const [userInfo, setUserInfo] = useState({});
 
     return (
         <UserContext.Provider value={userInfo}>
+            <Post/>
+
             <GlobalStyle/>
             <BrowserRouter>
                 <Switch>
-                    <Route path="/" exact></Route>
+                    <Route path="/" exact>
+                    </Route>
                     <Route path="/sign-up"></Route>
                     <Route path="/timeline"></Route>
                     <Route path="/my-posts"></Route>
