@@ -3,13 +3,13 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 import UserContext from '../contexts/UserContext';
 
-import Post from './timeline/Post';
+import Publish from './timeline/Publish';
 export default function App() {
     const [userInfo, setUserInfo] = useState({});
 
     return (
-        <UserContext.Provider value={userInfo}>
-            <Post/>
+        <UserContext.Provider value={{ userInfo, setUserInfo }}>
+            <Publish/>
 
             <GlobalStyle/>
             <BrowserRouter>
