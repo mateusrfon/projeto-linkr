@@ -104,7 +104,10 @@ export default function Posts({ posts, setPosts, getPosts }) {
                             <div className="text">
                                 <ReactHashtag
                                     renderHashtag={(hashtag) => (
-                                        <Hashtag href={`/hashtag/${hashtag}`}>
+                                        <Hashtag
+                                            href={`/hashtag/${hashtag}`}
+                                            key={Math.random()}
+                                        >
                                             {hashtag}
                                         </Hashtag>
                                     )}
