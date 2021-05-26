@@ -5,21 +5,22 @@ import styled from "styled-components"
 import UserContext from "../../contexts/UserContext"
 
 export default function Login(){
-    const {setUserInfo,userInfo} = useContext(UserContext);
+    const {setUserInfo} = useContext(UserContext);
     const [email, setEmail] = useState("")
     const [password,setPassword] = useState("")
     const history = useHistory();
     const [disable, setDisable] = useState(false)
 
+    
     function accountLogin(event){
         event.preventDefault();
         const info = { email: email, password:password}
         setDisable(!disable)
 
-
         const request = axios.post('https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/sign-in', info)
         request.then(promisse => {setUserInfo(promisse.data); history.push("/timeline")})
         request.catch(error => {history.push("/");
+            localStorage.setItem('userInfo',JSON.stringify(response.data))
             if(error.response.status === 403){
                 alert("Por favor, verifique seu e-mail e senha")
                 setDisable(false)
