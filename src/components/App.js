@@ -3,6 +3,8 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 import UserContext from '../contexts/UserContext';
 import Timeline from './timeline/Timeline';
+import Login from './login/login';
+import Signup from './login/sign-up';
 
 export default function App() {
     const [userInfo, setUserInfo] = useState({});
@@ -12,8 +14,12 @@ export default function App() {
             <GlobalStyle />
             <BrowserRouter>
                 <Switch>
-                    <Route path="/" exact></Route>
-                    <Route path="/sign-up"></Route>
+                    <Route path="/" exact>
+                        <Login />
+                    </Route>
+                    <Route path="/sign-up" exact>
+                        <Signup />
+                    </Route>
                     <Route path="/timeline">
                         <Timeline />
                     </Route>
