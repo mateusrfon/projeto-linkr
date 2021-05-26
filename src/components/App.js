@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 import UserContext from '../contexts/UserContext';
 import Navbar from './Navbar/Navbar';
+import Timeline from './timeline/Timeline';
 
 export default function App() {
     const [userInfo, setUserInfo] = useState({
@@ -24,6 +25,7 @@ export default function App() {
                     <Route path="/sign-up"></Route>
                     <Route path="/timeline">
                         <Navbar/>
+                        <Timeline />
                     </Route>
                     <Route path="/my-posts">
                         <Navbar/>
