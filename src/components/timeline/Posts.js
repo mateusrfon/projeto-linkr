@@ -1,50 +1,117 @@
 import styled from 'styled-components';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
-import { useState } from 'react';
+import { useContext } from 'react';
+import { Link } from 'react-router-dom';
+import ReactHashtag from 'react-hashtag';
+import UserContext from '../../contexts/UserContext';
+import axios from 'axios';
 
-export default function Posts({ posts }) {
-    const [wasLiked, setWasLiked] = useState(false);
+export default function Posts({ posts, setPosts, getPosts }) {
+    const { userInfo } = useContext(UserContext);
+
+    const config = {
+        headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+        },
+    };
 
     if (posts.length === 0) {
-        return <li>Nenhuma mensagem encontrada</li>;
+        return <p>Nenhuma mensagem encontrada</p>;
     }
 
     function newTab(link) {
         window.open(link, '_blank');
     }
 
+    function like(post, i) {
+        const like = post.likes.filter((like) => {
+            return like.userId === userInfo.user.id;
+        });
+
+        if (like.length === 0) {
+            const promise = axios.post(
+                `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/${post.id}/like`,
+                {},
+                config
+            );
+
+            promise.then((response) => {
+                let newPosts = [...posts];
+                newPosts[i].likesAmount = response.data.post.likes;
+                setPosts(newPosts);
+                getPosts(false);
+            });
+        } else {
+            const promise = axios.post(
+                `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/${post.id}/dislike`,
+                {},
+                config
+            );
+            promise.then((response) => {
+                getPosts(false);
+                let newPosts = [...posts];
+                newPosts[i].likesAmount = [];
+                setPosts(newPosts);
+            });
+        }
+    }
+
     return (
         <PostsList>
-            {posts.map((post) => {
+            {posts.map((post, i) => {
                 return (
                     <li key={post.id}>
                         <div className="icons">
-                            <img className="user-icon" src={post.user.avatar} />
+                            <div>
+                                <Link
+                                    className="user-icon"
+                                    to={`/user/${post.user.id}`}
+                                >
+                                    <Avatar avatar={post.user.avatar}></Avatar>
+                                </Link>
+                            </div>
                             <div className="likes">
-                                {!wasLiked ? (
+                                {post.likes.filter((like) => {
+                                    return like.userId === userInfo.user.id;
+                                }).length === 0 ? (
                                     <AiOutlineHeart
                                         color="white"
                                         onClick={() => {
-                                            setWasLiked(!wasLiked);
+                                            like(post, i);
                                         }}
                                     />
                                 ) : (
                                     <AiFillHeart
                                         color="red"
-                                        disable
                                         onClick={() => {
-                                            setWasLiked(!wasLiked);
+                                            like(post, i);
                                         }}
                                     />
                                 )}
                             </div>
-                            <p>{post.likes.length}</p>
+                            <p>
+                                {!('likesAmount' in post)
+                                    ? post.likes.length
+                                    : post.likesAmount.length}
+                            </p>
                         </div>
                         <div className="post-infos">
                             <div className="author-name">
-                                {post.user.username}
+                                <Link to={`/user/${post.user.id}`}>
+                                    {post.user.username}
+                                </Link>
                             </div>
-                            <div className="text">{post.text}</div>
+                            <div className="text">
+                                <ReactHashtag
+                                    renderHashtag={(hashtag) => (
+                                        <Hashtag href={`/hashtag/${hashtag}`}>
+                                            {hashtag}
+                                        </Hashtag>
+                                    )}
+                                >
+                                    {post.text}
+                                </ReactHashtag>
+                            </div>
                             <Button
                                 img={post.linkImage}
                                 onClick={() => {
@@ -57,7 +124,7 @@ export default function Posts({ posts }) {
                                 <div className="description">
                                     {post.linkDescription}
                                 </div>
-                                <div className="url">{post.link} </div>
+                                <div className="url">{post.link}</div>
                             </Button>
                         </div>
                     </li>
@@ -70,6 +137,13 @@ export default function Posts({ posts }) {
 const PostsList = styled.ul`
     color: white;
     font-family: 'Lato', sans-serif;
+
+    .user-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 27px;
+    }
+
     li {
         width: 45%;
         min-height: 276px;
@@ -78,12 +152,6 @@ const PostsList = styled.ul`
         border-radius: 16px;
         background-color: #171717;
         display: flex;
-    }
-    img.user-icon {
-        width: 50px;
-        height: 50px;
-        border-radius: 27px;
-        margin: 20px 0;
     }
 
     .icons {
@@ -130,6 +198,11 @@ const PostsList = styled.ul`
             width: auto;
         }
     }
+
+    a {
+        text-decoration: none;
+        color: #fff;
+    }
 `;
 
 const Button = styled.button`
@@ -169,4 +242,20 @@ const Button = styled.button`
     .url {
         margin-top: 15px;
     }
+`;
+
+const Avatar = styled.div`
+    width: 50px;
+    height: 50px;
+    border-radius: 27px;
+    margin: 20px 0;
+    background-image: ${({ avatar }) => `url(${avatar})`};
+    background-repeat: no-repeat;
+    background-size: cover;
+`;
+
+const Hashtag = styled.a`
+    color: #fff;
+    font-weight: bold;
+    font-family: 'Roboto', sans-serif;
 `;

@@ -2,49 +2,48 @@ import React, { useState } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 import UserContext from '../contexts/UserContext';
+import Timeline from './timeline/Timeline';
 import Navbar from './Navbar/Navbar';
 import Login from './login/login';
 import Signup from './login/sign-up';
-import Timeline from './timeline/Timeline';
-
 
 export default function App() {
     const [userInfo, setUserInfo] = useState({
-        "token": '',
-        "user": {
-            "id": '',
-            "email": '',
-            "username": '',
-            "avatar": ''
-        }
+        token: '',
+        user: {
+            id: '',
+            email: '',
+            username: '',
+            avatar: '',
+        },
     });
 
     return (
         <UserContext.Provider value={{ userInfo, setUserInfo }}>
-            <GlobalStyle/>
+            <GlobalStyle />
             <BrowserRouter>
                 <Switch>
                     <Route path="/" exact>
-                        <Login/>
+                        <Login />
                     </Route>
                     <Route path="/sign-up">
-                        <Signup/>
+                        <Signup />
                     </Route>
                     <Route path="/timeline">
-                        <Navbar/>
+                        <Navbar />
                         <Timeline />
                     </Route>
                     <Route path="/my-posts">
-                        <Navbar/>
+                        <Navbar />
                     </Route>
                     <Route path="/my-likes">
-                        <Navbar/>
+                        <Navbar />
                     </Route>
                     <Route path="/user/:id">
-                        <Navbar/>
+                        <Navbar />
                     </Route>
                     <Route path="/hashtag/:hashtag">
-                        <Navbar/>
+                        <Navbar />
                     </Route>
                 </Switch>
             </BrowserRouter>

@@ -8,25 +8,33 @@ export default function Publish({ reloadTimeline }) {
     const [link, setLink] = useState('');
     const [text, setText] = useState('');
     const [wait, setWait] = useState(false);
-    
+
     function publish(e) {
         e.preventDefault();
         setWait(true);
         const body = {
             text,
-            link
+            link,
         };
         const config = {
             headers: {
-                Authorization: `Bearer ${userInfo.token}`
-            }
-        }
-        const request = axios.post('https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts', body, config);
+                Authorization: `Bearer ${userInfo.token}`,
+            },
+        };
+        const request = axios.post(
+            'https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts',
+            body,
+            config
+        );
         request.then(() => {
             setWait(false);
             setLink('');
             setText('');
+<<<<<<< HEAD
+            reloadTimeline(false);
+=======
             reloadTimeline();
+>>>>>>> main
         });
         request.catch(() => {
             alert('Houve um erro ao publicar seu link');
@@ -36,31 +44,29 @@ export default function Publish({ reloadTimeline }) {
 
     return (
         <PostBox>
-                <UserImage src={userInfo.user.avatar} alt={'user'}/>
-                <Form onSubmit={publish}>
-                    <p>O que você tem pra favoritar hoje?</p>
-                    <input 
-                        required type="url" 
-                        placeholder="http://..."
-                        disabled={wait}
-                        onChange={e => setLink(e.target.value)}
-                        value={link}
-                    />
-                    <textarea 
-                        placeholder="Descrição do seu link #descrição"
-                        disabled={wait}
-                        onChange={e => setText(e.target.value)}
-                        value={text}
-                    />
-                    <div>
-                        <button disabled={wait}>
-                            {wait
-                                ? 'Publicando...'
-                                : 'Publicar'
-                            }
-                        </button>
-                    </div>
-                </Form>
+            <UserImage src={userInfo.user.avatar} alt={'user'} />
+            <Form onSubmit={publish}>
+                <p>O que você tem pra favoritar hoje?</p>
+                <input
+                    required
+                    type="url"
+                    placeholder="http://..."
+                    disabled={wait}
+                    onChange={(e) => setLink(e.target.value)}
+                    value={link}
+                />
+                <textarea
+                    placeholder="Descrição do seu link #descrição"
+                    disabled={wait}
+                    onChange={(e) => setText(e.target.value)}
+                    value={text}
+                />
+                <div>
+                    <button disabled={wait}>
+                        {wait ? 'Publicando...' : 'Publicar'}
+                    </button>
+                </div>
+            </Form>
         </PostBox>
     );
 }
@@ -101,10 +107,11 @@ const Form = styled.form`
     p {
         margin-bottom: 15px;
     }
-    input,textarea {
+    input,
+    textarea {
         width: 100%;
         padding: 5px 0 7px 13px;
-        background-color: #EFEFEF;
+        background-color: #efefef;
         border-radius: 5px;
         color: #949494;
         font-size: 15px;
@@ -124,7 +131,7 @@ const Form = styled.form`
         height: 31px;
         margin-top: 0;
         margin-bottom: 16px;
-        background-color: #1877F2;
+        background-color: #1877f2;
         border-radius: 5px;
         color: #fff;
         font-family: 'Lato';

@@ -2,13 +2,31 @@ import styled from 'styled-components';
 import Title from './Title';
 import Posts from './timeline/Posts';
 import Trending from './Trending';
+import Publish from './timeline/Publish';
+import { VscLoading } from 'react-icons/vsc';
 
 export default function Main(props) {
     return (
         <Page>
             <div className="container">
                 <Title title={props.title} />
-                <Posts posts={props.posts} />
+                {props.title === 'timeline' ? (
+                    <Publish reloadTimeline={props.getPosts} />
+                ) : (
+                    ''
+                )}
+                {props.loading ? (
+                    <div>
+                        loading
+                        <VscLoading />{' '}
+                    </div>
+                ) : (
+                    <Posts
+                        posts={props.posts}
+                        getPosts={props.getPosts}
+                        setPosts={props.setPosts}
+                    />
+                )}
             </div>
             <Trending />
         </Page>
