@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
-import { useContext, useEffect, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { useContext } from 'react';
+import { Link } from 'react-router-dom';
 import ReactHashtag from 'react-hashtag';
 import UserContext from '../../contexts/UserContext';
 import axios from 'axios';
@@ -198,14 +198,11 @@ const PostsList = styled.ul`
             width: auto;
         }
     }
-<<<<<<< HEAD
 
     a {
         text-decoration: none;
         color: #fff;
     }
-=======
->>>>>>> feature-sign-up
 `;
 
 const Button = styled.button`
@@ -246,7 +243,6 @@ const Button = styled.button`
         margin-top: 15px;
     }
 `;
-<<<<<<< HEAD
 
 const Avatar = styled.div`
     width: 50px;
@@ -263,5 +259,3 @@ const Hashtag = styled.a`
     font-weight: bold;
     font-family: 'Roboto', sans-serif;
 `;
-=======
->>>>>>> feature-sign-up
