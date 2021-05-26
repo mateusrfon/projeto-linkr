@@ -5,7 +5,6 @@ import UserContext from '../contexts/UserContext';
 import Timeline from './timeline/Timeline';
 import Login from './login/login';
 import Signup from './login/sign-up';
-import Timeline from './timeline/Timeline';
 
 export default function App() {
     const [userInfo, setUserInfo] = useState({});
