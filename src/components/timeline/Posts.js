@@ -1,9 +1,12 @@
 import styled from 'styled-components';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import ReactHashtag from 'react-hashtag';
 
 export default function Posts({ posts }) {
     const [wasLiked, setWasLiked] = useState(false);
+    const history = useHistory();
 
     if (posts.length === 0) {
         return <li>Nenhuma mensagem encontrada</li>;
@@ -19,7 +22,14 @@ export default function Posts({ posts }) {
                 return (
                     <li key={post.id}>
                         <div className="icons">
-                            <img className="user-icon" src={post.user.avatar} />
+                            <div>
+                                <Link
+                                    className="user-icon"
+                                    to={`/user/${post.user.id}`}
+                                >
+                                    <Avatar avatar={post.user.avatar}></Avatar>
+                                </Link>
+                            </div>
                             <div className="likes">
                                 {!wasLiked ? (
                                     <AiOutlineHeart
@@ -42,9 +52,21 @@ export default function Posts({ posts }) {
                         </div>
                         <div className="post-infos">
                             <div className="author-name">
-                                {post.user.username}
+                                <Link to={`/user/${post.user.id}`}>
+                                    {post.user.username}
+                                </Link>
                             </div>
-                            <div className="text">{post.text}</div>
+                            <div className="text">
+                                <ReactHashtag
+                                    renderHashtag={(hashtag) => (
+                                        <Hashtag href={`/hashtag/${hashtag}`}>
+                                            {hashtag}
+                                        </Hashtag>
+                                    )}
+                                >
+                                    {post.text}
+                                </ReactHashtag>
+                            </div>
                             <Button
                                 img={post.linkImage}
                                 onClick={() => {
@@ -70,6 +92,13 @@ export default function Posts({ posts }) {
 const PostsList = styled.ul`
     color: white;
     font-family: 'Lato', sans-serif;
+
+    .user-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 27px;
+    }
+
     li {
         width: 45%;
         min-height: 276px;
@@ -78,12 +107,6 @@ const PostsList = styled.ul`
         border-radius: 16px;
         background-color: #171717;
         display: flex;
-    }
-    img.user-icon {
-        width: 50px;
-        height: 50px;
-        border-radius: 27px;
-        margin: 20px 0;
     }
 
     .icons {
@@ -130,6 +153,11 @@ const PostsList = styled.ul`
             width: auto;
         }
     }
+
+    a {
+        text-decoration: none;
+        color: #fff;
+    }
 `;
 
 const Button = styled.button`
@@ -169,4 +197,20 @@ const Button = styled.button`
     .url {
         margin-top: 15px;
     }
+`;
+
+const Avatar = styled.div`
+    width: 50px;
+    height: 50px;
+    border-radius: 27px;
+    margin: 20px 0;
+    background-image: ${({ avatar }) => `url(${avatar})`};
+    background-repeat: no-repeat;
+    background-size: cover;
+`;
+
+const Hashtag = styled.a`
+    color: #fff;
+    font-weight: bold;
+    font-family: 'Roboto', sans-serif;
 `;

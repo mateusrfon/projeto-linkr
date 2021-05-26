@@ -2,12 +2,14 @@ import styled from 'styled-components';
 import Title from './Title';
 import Posts from './timeline/Posts';
 import Trending from './Trending';
+import Publish from './timeline/Publish';
 
 export default function Main(props) {
     return (
         <Page>
             <div className="container">
                 <Title title={props.title} />
+                <Publish />
                 <Posts posts={props.posts} />
             </div>
             <Trending />
