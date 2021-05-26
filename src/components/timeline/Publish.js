@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import axios from 'axios';
 import UserContext from '../../contexts/UserContext';
 
-export default function Publish(reloadTimeline) {
+export default function Publish({ reloadTimeline }) {
     const { userInfo } = useContext(UserContext);
     const [link, setLink] = useState('');
     const [text, setText] = useState('');
@@ -26,11 +26,11 @@ export default function Publish(reloadTimeline) {
             body,
             config
         );
-        request.then((response) => {
+        request.then(() => {
             setWait(false);
             setLink('');
             setText('');
-            //reloadTimeline;
+            reloadTimeline(false);
         });
         request.catch(() => {
             alert('Houve um erro ao publicar seu link');
@@ -40,7 +40,7 @@ export default function Publish(reloadTimeline) {
 
     return (
         <PostBox>
-            <UserImage src={userInfo.image} alt={'user'} />
+            <UserImage src={userInfo.user.avatar} alt={'user'} />
             <Form onSubmit={publish}>
                 <p>O que você tem pra favoritar hoje?</p>
                 <input

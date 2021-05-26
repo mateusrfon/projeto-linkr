@@ -10,7 +10,11 @@ export default function Main(props) {
         <Page>
             <div className="container">
                 <Title title={props.title} />
-                {props.title === 'timeline' ? <Publish /> : ''}
+                {props.title === 'timeline' ? (
+                    <Publish reloadTimeline={props.getPosts} />
+                ) : (
+                    ''
+                )}
                 {props.loading ? (
                     <div>
                         loading
