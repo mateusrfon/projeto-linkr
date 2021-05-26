@@ -18,9 +18,13 @@ export default function Login(){
         setDisable(!disable)
 
         const request = axios.post('https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/sign-in', info)
-        request.then(promisse => {setUserInfo(promisse.data); history.push("/timeline")})
+        request.then(promisse => {
+            setUserInfo(promisse.data); 
+            history.push("/timeline");
+            localStorage.setItem('userInfo',JSON.stringify(promisse.data))})
+
         request.catch(error => {history.push("/");
-            localStorage.setItem('userInfo',JSON.stringify(response.data))
+            
             if(error.response.status === 403){
                 alert("Por favor, verifique seu e-mail e senha")
                 setDisable(false)
