@@ -1,24 +1,64 @@
 import styled from 'styled-components';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import ReactHashtag from 'react-hashtag';
+import UserContext from '../../contexts/UserContext';
+import axios from 'axios';
 
-export default function Posts({ posts }) {
-    const [wasLiked, setWasLiked] = useState(false);
-    const history = useHistory();
+export default function Posts({ posts, setPosts, getPosts }) {
+    const { userInfo } = useContext(UserContext);
+
+    const config = {
+        headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+        },
+    };
 
     if (posts.length === 0) {
-        return <li>Nenhuma mensagem encontrada</li>;
+        return <p>Nenhuma mensagem encontrada</p>;
     }
 
     function newTab(link) {
         window.open(link, '_blank');
     }
 
+    function like(post, i) {
+        const like = post.likes.filter((like) => {
+            return like.userId === userInfo.user.id;
+        });
+
+        if (like.length === 0) {
+            const promise = axios.post(
+                `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/${post.id}/like`,
+                {},
+                config
+            );
+
+            promise.then((response) => {
+                let newPosts = [...posts];
+                newPosts[i].likesAmount = response.data.post.likes;
+                setPosts(newPosts);
+                getPosts(false);
+            });
+        } else {
+            const promise = axios.post(
+                `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/${post.id}/dislike`,
+                {},
+                config
+            );
+            promise.then((response) => {
+                getPosts(false);
+                let newPosts = [...posts];
+                newPosts[i].likesAmount = [];
+                setPosts(newPosts);
+            });
+        }
+    }
+
     return (
         <PostsList>
-            {posts.map((post) => {
+            {posts.map((post, i) => {
                 return (
                     <li key={post.id}>
                         <div className="icons">
@@ -31,24 +71,29 @@ export default function Posts({ posts }) {
                                 </Link>
                             </div>
                             <div className="likes">
-                                {!wasLiked ? (
+                                {post.likes.filter((like) => {
+                                    return like.userId === userInfo.user.id;
+                                }).length === 0 ? (
                                     <AiOutlineHeart
                                         color="white"
                                         onClick={() => {
-                                            setWasLiked(!wasLiked);
+                                            like(post, i);
                                         }}
                                     />
                                 ) : (
                                     <AiFillHeart
                                         color="red"
-                                        disable
                                         onClick={() => {
-                                            setWasLiked(!wasLiked);
+                                            like(post, i);
                                         }}
                                     />
                                 )}
                             </div>
-                            <p>{post.likes.length}</p>
+                            <p>
+                                {!('likesAmount' in post)
+                                    ? post.likes.length
+                                    : post.likesAmount.length}
+                            </p>
                         </div>
                         <div className="post-infos">
                             <div className="author-name">
@@ -79,7 +124,7 @@ export default function Posts({ posts }) {
                                 <div className="description">
                                     {post.linkDescription}
                                 </div>
-                                <div className="url">{post.link} </div>
+                                <div className="url">{post.link}</div>
                             </Button>
                         </div>
                     </li>

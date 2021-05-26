@@ -17,7 +17,11 @@ export default function Main(props) {
                         <VscLoading />{' '}
                     </div>
                 ) : (
-                    <Posts posts={props.posts} />
+                    <Posts
+                        posts={props.posts}
+                        getPosts={props.getPosts}
+                        setPosts={props.setPosts}
+                    />
                 )}
             </div>
             <Trending />
