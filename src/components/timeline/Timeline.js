@@ -4,9 +4,10 @@ import { useContext, useEffect, useState } from 'react';
 import UserContext from '../../contexts/UserContext';
 
 export default function Timeline() {
-    //  const [data, setData] = useState([]);
+    const [data, setData] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
     const user = useContext(UserContext);
-    const data = [
+    /*const data = [
         {
             id: 2,
             text: 'Never Gonna Give You Up #rickroll',
@@ -57,9 +58,10 @@ export default function Timeline() {
                 },
             ],
         },
-    ];
+    ];*/
 
-    /*  function getPosts() {
+    function getPosts() {
+        setIsLoading(true);
         const promise = axios.get(
             'https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts',
             {
@@ -69,17 +71,19 @@ export default function Timeline() {
             }
         );
         promise.then((response) => {
+            setIsLoading(false);
             setData(response.data);
         });
 
         promise.catch((error) => {
-            alert("Houve um erro por favor recarregue a pagina")
-        })
+            setIsLoading(false);
+            alert('Houve um erro por favor recarregue a pagina');
+        });
     }
 
     useEffect(() => {
         getPosts();
-    }, []);*/
+    }, []);
 
-    return <Main posts={data} title="timeline" />;
+    return <Main posts={data} title="timeline" loading={isLoading} />;
 }
