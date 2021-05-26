@@ -22,7 +22,7 @@ export default function Publish(reloadTimeline) {
             }
         }
         const request = axios.post('https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts', body, config);
-        request.then(response => {
+        request.then(() => {
             setWait(false);
             setLink('');
             setText('');
@@ -36,7 +36,7 @@ export default function Publish(reloadTimeline) {
 
     return (
         <PostBox>
-                <UserImage src={userInfo.image} alt={'user'}/>
+                <UserImage src={userInfo.user.avatar} alt={'user'}/>
                 <Form onSubmit={publish}>
                     <p>O que você tem pra favoritar hoje?</p>
                     <input 
