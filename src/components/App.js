@@ -3,7 +3,10 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 import UserContext from '../contexts/UserContext';
 import Navbar from './Navbar/Navbar';
+import Login from './login/login';
+import Signup from './login/sign-up';
 import Timeline from './timeline/Timeline';
+
 
 export default function App() {
     const [userInfo, setUserInfo] = useState({
@@ -22,8 +25,11 @@ export default function App() {
             <BrowserRouter>
                 <Switch>
                     <Route path="/" exact>
+                        <Login/>
                     </Route>
-                    <Route path="/sign-up"></Route>
+                    <Route path="/sign-up">
+                        <Signup/>
+                    </Route>
                     <Route path="/timeline">
                         <Navbar/>
                         <Timeline />
