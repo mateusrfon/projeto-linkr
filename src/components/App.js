@@ -4,12 +4,14 @@ import { createGlobalStyle } from 'styled-components';
 import UserContext from '../contexts/UserContext';
 import Login from './login/login';
 import Signup from './login/sign-up';
+import Timeline from './timeline/Timeline';
 
 
 export default function App() {
     const [userInfo, setUserInfo] = useState({});
 
     return (
+
         <UserContext.Provider value={{userInfo, setUserInfo}}>
             <GlobalStyle/>
             <BrowserRouter>
@@ -20,7 +22,11 @@ export default function App() {
                     <Route path="/sign-up" exact>
                         <Signup/>
                     </Route>
-                    <Route path="/timeline"></Route>
+                    <Route path="/timeline">
+                      <Timeline />
+                      </Route>
+
+
                     <Route path="/my-posts"></Route>
                     <Route path="/my-likes"></Route>
                     <Route path="/user/:id"></Route>
