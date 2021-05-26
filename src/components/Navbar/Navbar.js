@@ -32,7 +32,7 @@ export default function Navbar() {
                     <img src={userInfo.user.avatar} alt="user"/>
                 </IconContext.Provider>
             </MenuButton>
-            <Menu display={menu}>
+            <Menu display={menu.toString()}>
                 <BrowserRouter>
                         <Link to='/my-posts'>My posts</Link>
                         <Link to='/my-likes'>My likes</Link>
@@ -89,7 +89,7 @@ const Menu = styled.div`
     width: 130px;
     height: 109px;
     background-color: #171717;
-    display: ${props => props.display ? 'flex' : 'none'};
+    display: ${props => (props.display === 'true') ? 'flex' : 'none'};
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
