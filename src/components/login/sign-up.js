@@ -56,6 +56,9 @@ let Container = styled.div`
     display: flex;
     color:#fff;
     font-family: 'Passion One';
+    @media(max-width: 375px){
+        flex-direction: column;
+    }
     
 `
 let Front = styled.div`
@@ -76,6 +79,25 @@ let Front = styled.div`
         margin: 0 0 0 10vw;
         font-size: 43px;
         width: 450px;
+    }
+    @media(max-width: 375px){
+        width: 100vw;
+        height: 175px;
+        align-items: center;
+        justify-content: center;
+        h1{
+            font-size: 76px;
+            margin:0;
+            width: auto;
+            height: 70px;
+            
+            
+        }
+        p{
+            font-size: 23px;
+            width: 237px;
+            margin: 0;
+        }
     }
 `
 let Inputs = styled.div`
@@ -117,5 +139,11 @@ let Inputs = styled.div`
             text-decoration: underline;
             margin: 10px 0 0 0 ;
         }
+        
     }
+    @media(max-width: 375px){
+        width: 100vw;
+        align-items:start;
+        margin: 40px 0 0 0 ;
+}
 `

@@ -38,7 +38,7 @@ export default function Login(){
             <form onSubmit={accountLogin}>
                 <input required placeholder="e-mail" type="email" onChange={(e)=> setEmail(e.target.value)} />
                 <input required placeholder="password" type="password" onChange={(e)=> setPassword(e.target.value)} />
-                <button disabled={disable} type="submit">Sign up</button>
+                <button disabled={disable} type="submit">Log in</button>
                 <Link to="/sign-up"><p>First time? Create an account!</p></Link>
             </form>
             </Inputs>
@@ -53,6 +53,9 @@ let Container = styled.div`
     display: flex;
     color:#fff;
     font-family: 'Passion One';
+    @media(max-width: 375px){
+        flex-direction: column;
+    }
     
 `
 let Front = styled.div`
@@ -74,6 +77,26 @@ let Front = styled.div`
         font-size: 43px;
         width: 450px;
     }
+    @media(max-width: 375px){
+        width: 100vw;
+        height: 175px;
+        align-items: center;
+        justify-content: center;
+        h1{
+            font-size: 76px;
+            margin:0;
+            width: auto;
+            height: 70px;
+            
+            
+        }
+        p{
+            font-size: 23px;
+            width: 237px;
+            margin: 0;
+        }
+    }
+    
 `
 let Inputs = styled.div`
     width: 38vw;
@@ -115,4 +138,9 @@ let Inputs = styled.div`
             margin: 10px 0 0 0 ;
         }
     }
+    @media(max-width: 375px){
+        width: 100vw;
+        align-items:start;
+        margin: 40px 0 0 0 ;
+}
 `
