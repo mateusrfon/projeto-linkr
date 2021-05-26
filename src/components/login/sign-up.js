@@ -4,7 +4,6 @@ import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components"
 
 export default function Signup(){
-
     const [email, setEmail] = useState("")
     const [password,setPassword] = useState("")
     const [username, setUsername] = useState("")
