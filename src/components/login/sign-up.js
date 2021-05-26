@@ -1,6 +1,6 @@
 import axios from "axios"
 import { useContext, useState } from "react"
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components"
 import UserContext from "../../contexts/UserContext"
 
@@ -10,14 +10,23 @@ export default function Signup(){
     const [password,setPassword] = useState("")
     const [username, setUsername] = useState("")
     const [url, setUrl] = useState("")
+    const history = useHistory();
+    const [disable, setDisable] = useState(false)
 
     function createAccount(event){
         event.preventDefault();
-        const info = { email: {email}, password:{password},username:{username},pictureUrl:{url}}
+        const info = { email: email, password:password,username:username,pictureUrl:url}
+        console.log(info)
+        setDisable(!disable)
 
-        const promisse = axios.post('https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/sign-up', info)
-        promisse.then(r => setUserInfo(r.data))
-        console.log(userInfo)
+
+        const request = axios.post('https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/sign-up', info)
+        request.then(() => history.push("/"))
+        request.catch(error => {history.push("/sign-up");
+            if(error.response.status === 403){
+                alert("E-mail já cadastrado")
+                setDisable(false)
+            }})
 
     }
     return(
@@ -26,13 +35,13 @@ export default function Signup(){
             <h1>linkr</h1>
             <p>save,share and discover the best links on the web</p>
             </Front>
-            <Inputs>
+            <Inputs disable={disable}>
             <form onSubmit={createAccount}>
-                <input placeholder="e-mail" type="email" onChange={(e)=> setEmail(e.target.value)} />
-                <input placeholder="password" type="password" onChange={(e)=> setPassword(e.target.value)} />
-                <input placeholder="username" type="text" onChange={(e)=> setUsername(e.target.value)} />
-                <input placeholder="picture url" type="url" onChange={(e)=> setUrl(e.target.value)} />
-                <button type="submit">Sign up</button>
+                <input required placeholder="e-mail" type="email" onChange={(e)=> setEmail(e.target.value)} />
+                <input required placeholder="password" type="password" onChange={(e)=> setPassword(e.target.value)} />
+                <input required placeholder="username" type="text" onChange={(e)=> setUsername(e.target.value)} />
+                <input required placeholder="picture url" type="url" onChange={(e)=> setUrl(e.target.value)} />
+                <button disabled={disable} type="submit">Sign up</button>
                 <Link to="/"><p>Switch back to log in</p></Link>
             </form>
             </Inputs>
@@ -100,6 +109,7 @@ let Inputs = styled.div`
             color:#fff;
             font-size: 27px;
             border-radius: 6px;
+            opacity: ${props => props.disable? "0.7": "1"};
         }
         p{
             font-family: 'Lato';
