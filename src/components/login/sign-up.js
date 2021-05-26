@@ -16,7 +16,6 @@ export default function Signup(){
     function createAccount(event){
         event.preventDefault();
         const info = { email: email, password:password,username:username,pictureUrl:url}
-        console.log(info)
         setDisable(!disable)
 
 
