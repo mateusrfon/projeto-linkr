@@ -21,6 +21,7 @@ export default function Navbar() {
                 "avatar": ''
             }
         });
+        localStorage.removeItem('userInfo');
     }
 
     return (
