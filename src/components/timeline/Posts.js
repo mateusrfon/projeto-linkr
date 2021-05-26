@@ -137,7 +137,6 @@ export default function Posts({ posts, setPosts, getPosts }) {
 const PostsList = styled.ul`
     color: white;
     font-family: 'Lato', sans-serif;
-<<<<<<< HEAD
 
     .user-icon {
         width: 50px;
@@ -145,8 +144,6 @@ const PostsList = styled.ul`
         border-radius: 27px;
     }
 
-=======
->>>>>>> feature-sign-up
     li {
         width: 45%;
         min-height: 276px;
@@ -156,15 +153,6 @@ const PostsList = styled.ul`
         background-color: #171717;
         display: flex;
     }
-<<<<<<< HEAD
-=======
-    img.user-icon {
-        width: 50px;
-        height: 50px;
-        border-radius: 27px;
-        margin: 20px 0;
-    }
->>>>>>> feature-sign-up
 
     .icons {
         display: flex;
