@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import axios from 'axios';
 import UserContext from '../../contexts/UserContext';
 
-export default function Publish(reloadTimeline) {
+export default function Publish({ reloadTimeline }) {
     const { userInfo } = useContext(UserContext);
     const [link, setLink] = useState('');
     const [text, setText] = useState('');
