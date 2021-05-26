@@ -5,7 +5,7 @@ import styled from "styled-components"
 import UserContext from "../../contexts/UserContext"
 
 export default function Login(){
-    const {setUserInfo,userInfo} = useContext(UserContext);
+    const {setUserInfo} = useContext(UserContext);
     const [email, setEmail] = useState("")
     const [password,setPassword] = useState("")
     const history = useHistory();
