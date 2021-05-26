@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 import UserContext from '../contexts/UserContext';
-
+import Navbar from './Navbar/Navbar';
 import Timeline from './timeline/Timeline';
 
 export default function App() {
@@ -25,20 +25,20 @@ export default function App() {
                     </Route>
                     <Route path="/sign-up"></Route>
                     <Route path="/timeline">
-                        
+                        <Navbar/>
                         <Timeline />
                     </Route>
                     <Route path="/my-posts">
-                        
+                        <Navbar/>
                     </Route>
                     <Route path="/my-likes">
-                        
+                        <Navbar/>
                     </Route>
                     <Route path="/user/:id">
-                        
+                        <Navbar/>
                     </Route>
                     <Route path="/hashtag/:hashtag">
-                        
+                        <Navbar/>
                     </Route>
                 </Switch>
             </BrowserRouter>
