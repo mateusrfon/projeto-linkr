@@ -83,6 +83,7 @@ let Front = styled.div`
     @media(max-width: 375px){
         width: 100vw;
         height: 175px;
+        min-height: 175px;
         align-items: center;
         justify-content: center;
         h1{
