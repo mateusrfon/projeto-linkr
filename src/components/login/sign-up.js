@@ -1,11 +1,10 @@
 import axios from "axios"
-import { useContext, useState } from "react"
+import {useState } from "react"
 import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components"
-import UserContext from "../../contexts/UserContext"
 
 export default function Signup(){
-    const {setUserInfo,userInfo} = useContext(UserContext);
+
     const [email, setEmail] = useState("")
     const [password,setPassword] = useState("")
     const [username, setUsername] = useState("")
