@@ -1,7 +1,7 @@
 import axios from "axios"
 import { useContext } from "react"
 import UserContext from "../../contexts/UserContext"
-import { confirmAlert } from 'react-confirm-alert';
+
 
 export default function DeletePost({post}){
     const {userInfo} = useContext(UserContext)
