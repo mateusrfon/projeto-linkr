@@ -28,7 +28,7 @@ export default function Navbar() {
 
     return (
         <StyledNavbar>
-            <Linkr>linkr</Linkr>
+            <Linkr><Link to='/timeline'>linkr</Link></Linkr>
             <MenuButton onClick={() => setMenu(!menu)}>
                 <IconContext.Provider value={{ className: "arrow" }}>
                     {menu ? <AiOutlineUp /> : <AiOutlineDown />}
