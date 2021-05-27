@@ -3,6 +3,7 @@ import { useContext, useState } from "react"
 import { Link ,useHistory} from "react-router-dom";
 import styled from "styled-components"
 import UserContext from "../../contexts/UserContext"
+import LocalLogin from './LocalLogin';
 
 export default function Login(){
     const {setUserInfo} = useContext(UserContext);
@@ -11,6 +12,7 @@ export default function Login(){
     const history = useHistory();
     const [disable, setDisable] = useState(false)
 
+    LocalLogin();
     
     function accountLogin(event){
         event.preventDefault();
