@@ -6,6 +6,7 @@ export default function Title(props) {
 
 const TitlePage = styled.h1`
     margin-top: 53px;
+    margin-bottom: 41px;
     width: 80%;
     font-size: 43px;
     color: white;
