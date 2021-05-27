@@ -1,40 +1,37 @@
 import axios from "axios"
-import React,{useContext, useEffect} from 'react';
+import React,{useContext, useEffect, useState} from 'react';
 import styled from 'styled-components';
-import UserContext from "../../contexts/UserContext";
 
 
-export default function DeletePost({post,userInfo,getPosts,modal, setModal}){
 
+export default function DeletePost({post,userInfo,getPosts,setModal}){
+    const [disabled, setDisabled] = useState(false)
     
-    if(userInfo.user.id === post.user.id){
+   
         return(
             <>
             <Confirm>
                 <div>
-                <h1>Tem certeza que deseja excluir essa publicação?</h1>
+                <h1>{disabled ? "Deletando post":"Tem certeza que deseja excluir essa publicação?"}</h1>
                 <span>
-                <No onClick={()=>setModal(false)}>Não, voltar</No>
-                <Yes onClick={()=>remove()}> Sim, excluir </Yes>
+                <No disabled = {disabled} onClick={()=>setModal(false)}>Não, voltar</No>
+                <Yes disabled = {disabled} onClick={()=>remove()}> Sim, excluir </Yes>
                 </span>
                 </div>
             </Confirm>
             </>
-        )} else{
-            return(
-                null
-            )
+        )
 
-        }
+        
  
     
 
     function remove(){
+        setDisabled(true)
         const request = axios.delete(`https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/${post.id}`, {headers:{Authorization: `Bearer ${userInfo.token}`}})
         request.then(() => {getPosts(false);
         setModal(false)})
-        request.catch(()=> {console.log(userInfo.user.id);
-            console.log(post.user.id)})
+        request.catch(()=>{alert("não foi possivel exlcuir o post");setModal(false)})
     
     }
 
@@ -83,11 +80,11 @@ const Confirm = styled.div`
     }
 `
 const Yes = styled.button`
-    background-color: #1877F2;
+    background-color: ${props => props.disabled?"#0867h2":"#1877F2"};
     color: #fff;
 
 `
 const No = styled.button`
-    background-color: #fff;
+    background-color: ${props => props.disabled?"#141414":"#fffff"};
     color: #1877F2;
 `

@@ -3,7 +3,7 @@ import { AiOutlineHeart, AiFillHeart} from 'react-icons/ai';
 import { FiTrash} from 'react-icons/fi';
 import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
-import ReactHashtag from 'react-hashtag'
+import ReactHashtag from 'react-hashtag';
 import UserContext from '../../contexts/UserContext';
 import ReactTooltip from 'react-tooltip';
 import axios from 'axios';
@@ -129,8 +129,8 @@ export default function Posts({ posts, setPosts, getPosts }) {
                             <ReactTooltip globalEventOff="mouseout" />
                         </div>
                         <div className="post-infos">
-                            <TrashCam>{post.user.id === userInfo.user.id?  <FiTrash color="white" onClick={()=>setModal(true)}/>:<></> }</TrashCam>
-                            {modal && <DeletePost post={post} userInfo={userInfo} getPosts={getPosts} modal={modal} setModal={setModal}/>}
+                            <TrashCam>{post.user.id === userInfo.user.id?  <FiTrash color="white" onClick={()=>setModal(post.id)}/>:<></> }</TrashCam>
+                            {modal ===post.id? <DeletePost post={post} userInfo={userInfo} getPosts={getPosts} modal={modal} setModal={setModal}/> :null}
                             <div className="author-name">
                                 <Link to={`/user/${post.user.id}`}>
                                     {post.user.username}
@@ -139,12 +139,20 @@ export default function Posts({ posts, setPosts, getPosts }) {
                             <div className="text">
                                 <ReactHashtag
                                     renderHashtag={(hashtag) => (
-                                        <Hashtag
-                                            href={`/hashtag/${hashtag}`}
+                                        <Link
                                             key={Math.random()}
+                                            to={`/hashtag/${
+                                                hashtag[0] === '#'
+                                                    ? hashtag.slice(
+                                                          1,
+                                                          hashtag.length
+                                                      )
+                                                    : hashtag
+                                            }`}
                                         >
+                                            {' '}
                                             {hashtag}
-                                        </Hashtag>
+                                        </Link>
                                     )}
                                 >
                                     {post.text}
@@ -184,10 +192,10 @@ const PostsList = styled.ul`
     }
 
     li {
-        width: 45%;
+        width: 611px;
         min-height: 276px;
         height: auto;
-        margin-top: 30px;
+        margin-bottom: 30px;
         border-radius: 16px;
         background-color: #171717;
         display: flex;
@@ -214,6 +222,11 @@ const PostsList = styled.ul`
 
     .text {
         color: #b7b7b7;
+        a {
+            color: #fff;
+            font-weight: bold;
+            font-family: 'Roboto', sans-serif;
+        }
     }
 
     .description {
@@ -229,7 +242,7 @@ const PostsList = styled.ul`
         color: #cecece;
     }
 
-    @media (max-width: 1100px) {
+    @media (max-width: 1000px) {
         li {
             width: 100%;
         }
@@ -294,11 +307,6 @@ const Avatar = styled.div`
     background-size: cover;
 `;
 
-const Hashtag = styled.a`
-    color: #fff;
-    font-weight: bold;
-    font-family: 'Roboto', sans-serif;
-`;
 const TrashCam = styled.span`
     position: absolute;
     top: 22px;

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import { useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import UserContext from '../contexts/UserContext';
 
@@ -28,36 +29,49 @@ export default function Trending() {
     }, [handleGetHashtags]);
 
     return (
-        <Aside>
-            <TrendingTop>
-                <p>trending</p>
-            </TrendingTop>
-            <div className="links">
-                {hashtags.map((hashtag) => {
-                    return (
-                        <div key={hashtag.id}>
-                            <a href={`/hashtag/${hashtag.name}`}>
-                                # {hashtag.name}
-                            </a>
-                        </div>
-                    );
-                })}
-            </div>
-        </Aside>
+        <Container className="container-aside">
+            <Aside>
+                <TrendingTop>
+                    <p>trending</p>
+                </TrendingTop>
+                <div className="links">
+                    {hashtags.map((hashtag) => {
+                        return (
+                            <div key={hashtag.id}>
+                                <Link to={`/hashtag/${hashtag.name}`}>
+                                    # {hashtag.name}
+                                </Link>
+                            </div>
+                        );
+                    })}
+                </div>
+            </Aside>
+        </Container>
     );
 }
 
+const Container = styled.div`
+    margin-left: 25px;
+    width: 100%;
+    margin-top: 47px;
+
+    aside {
+        @media (max-width: 1275px) {
+            width: 150px;
+            margin-left: 120px;
+        }
+    }
+`;
+
 const Aside = styled.aside`
     width: 301px;
-    height: 406px;
+    height: 420px;
     background: #171717;
     border-radius: 16px;
-    position: absolute;
-    top: 120px;
-    right: calc(100% - 1100px);
+    margin-top: 110px;
 
     .links {
-        height: calc(406px - 61px);
+        height: 345px;
         font-family: 'Lato', sans-serif;
         font-weight: 700;
         font-size: 20px;
