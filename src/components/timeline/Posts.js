@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import ReactHashtag from 'react-hashtag';
+import ReactHashtag from 'react-hashtag'
 import UserContext from '../../contexts/UserContext';
 import ReactTooltip from 'react-tooltip';
 import axios from 'axios';
