@@ -3,6 +3,7 @@ import { useContext, useState } from "react"
 import { Link ,useHistory} from "react-router-dom";
 import styled from "styled-components"
 import UserContext from "../../contexts/UserContext"
+import LocalLogin from './LocalLogin';
 
 export default function Login(){
     const {setUserInfo} = useContext(UserContext);
@@ -11,15 +12,21 @@ export default function Login(){
     const history = useHistory();
     const [disable, setDisable] = useState(false)
 
+    LocalLogin();
+    
     function accountLogin(event){
         event.preventDefault();
         const info = { email: email, password:password}
         setDisable(!disable)
 
-
         const request = axios.post('https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/sign-in', info)
-        request.then(promisse => {setUserInfo(promisse.data); history.push("/timeline")})
+        request.then(promisse => {
+            setUserInfo(promisse.data); 
+            history.push("/timeline");
+            localStorage.setItem('userInfo',JSON.stringify(promisse.data))})
+
         request.catch(error => {history.push("/");
+            
             if(error.response.status === 403){
                 alert("Por favor, verifique seu e-mail e senha")
                 setDisable(false)

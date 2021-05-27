@@ -1,50 +1,156 @@
 import styled from 'styled-components';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
-import { useState } from 'react';
+import { useContext } from 'react';
+import { Link } from 'react-router-dom';
+import ReactHashtag from 'react-hashtag';
+import UserContext from '../../contexts/UserContext';
+import ReactTooltip from 'react-tooltip';
+import axios from 'axios';
 
-export default function Posts({ posts }) {
-    const [wasLiked, setWasLiked] = useState(false);
+export default function Posts({ posts, setPosts, getPosts }) {
+    const { userInfo } = useContext(UserContext);
+
+    const config = {
+        headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+        },
+    };
 
     if (posts.length === 0) {
-        return <li>Nenhuma mensagem encontrada</li>;
+        return <p>Nenhuma mensagem encontrada</p>;
     }
 
     function newTab(link) {
         window.open(link, '_blank');
     }
 
+    function like(post, i) {
+        const like = post.likes.filter((like) => {
+            return like.userId === userInfo.user.id;
+        });
+
+        if (like.length === 0) {
+            const promise = axios.post(
+                `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/${post.id}/like`,
+                {},
+                config
+            );
+
+            promise.then((response) => {
+                let newPosts = [...posts];
+                newPosts[i].likesAmount = response.data.post.likes;
+                setPosts(newPosts);
+                getPosts(false);
+            });
+        } else {
+            const promise = axios.post(
+                `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/${post.id}/dislike`,
+                {},
+                config
+            );
+            promise.then((response) => {
+                getPosts(false);
+                let newPosts = [...posts];
+                newPosts[i].likesAmount = [];
+                setPosts(newPosts);
+            });
+        }
+    }
+
     return (
         <PostsList>
-            {posts.map((post) => {
+            {posts.map((post, i) => {
+                const wasLiked = !(
+                    post.likes.filter((like) => {
+                        return like.userId === userInfo.user.id;
+                    }).length === 0
+                );
+                const likesWithoutUserLike = post.likes.filter((like) => {
+                    return like['user.username'] !== userInfo.user.username;
+                });
                 return (
                     <li key={post.id}>
                         <div className="icons">
-                            <img className="user-icon" src={post.user.avatar} />
+                            <div>
+                                <Link
+                                    className="user-icon"
+                                    to={`/user/${post.user.id}`}
+                                >
+                                    <Avatar avatar={post.user.avatar}></Avatar>
+                                </Link>
+                            </div>
                             <div className="likes">
                                 {!wasLiked ? (
                                     <AiOutlineHeart
                                         color="white"
                                         onClick={() => {
-                                            setWasLiked(!wasLiked);
+                                            like(post, i);
                                         }}
                                     />
                                 ) : (
                                     <AiFillHeart
                                         color="red"
-                                        disable
                                         onClick={() => {
-                                            setWasLiked(!wasLiked);
+                                            like(post, i);
                                         }}
                                     />
                                 )}
                             </div>
-                            <p>{post.likes.length}</p>
+                            <p
+                                data-tip={
+                                    post.likes.length >= 2 && !wasLiked
+                                        ? post.likes[0]['user.username'] +
+                                          ' e ' +
+                                          post.likes[1]['user.username'] +
+                                          ` curtiram e outras ${
+                                              post.likes.length - 2
+                                          } pessoas`
+                                        : post.likes.length >= 2
+                                        ? `Voce e ${
+                                              likesWithoutUserLike[0][
+                                                  `user.username`
+                                              ]
+                                          } curtiram e outras ${
+                                              post.likes.length - 2
+                                          } pessoas`
+                                        : ''
+                                }
+                                data-event="mouseover"
+                            >
+                                {!('likesAmount' in post)
+                                    ? post.likes.length
+                                    : post.likesAmount.length}
+                            </p>
+                            <ReactTooltip globalEventOff="mouseout" />
                         </div>
                         <div className="post-infos">
                             <div className="author-name">
-                                {post.user.username}
+                                <Link to={`/user/${post.user.id}`}>
+                                    {post.user.username}
+                                </Link>
                             </div>
-                            <div className="text">{post.text}</div>
+                            <div className="text">
+                                <ReactHashtag
+                                    renderHashtag={(hashtag) => (
+                                        <Link
+                                            key={Math.random()}
+                                            to={`/hashtag/${
+                                                hashtag[0] === '#'
+                                                    ? hashtag.slice(
+                                                          1,
+                                                          hashtag.length
+                                                      )
+                                                    : hashtag
+                                            }`}
+                                        >
+                                            {' '}
+                                            {hashtag}
+                                        </Link>
+                                    )}
+                                >
+                                    {post.text}
+                                </ReactHashtag>
+                            </div>
                             <Button
                                 img={post.linkImage}
                                 onClick={() => {
@@ -57,7 +163,7 @@ export default function Posts({ posts }) {
                                 <div className="description">
                                     {post.linkDescription}
                                 </div>
-                                <div className="url">{post.link} </div>
+                                <div className="url">{post.link}</div>
                             </Button>
                         </div>
                     </li>
@@ -70,20 +176,21 @@ export default function Posts({ posts }) {
 const PostsList = styled.ul`
     color: white;
     font-family: 'Lato', sans-serif;
-    li {
-        width: 45%;
-        min-height: 276px;
-        height: auto;
-        margin-top: 30px;
-        border-radius: 16px;
-        background-color: #171717;
-        display: flex;
-    }
-    img.user-icon {
+
+    .user-icon {
         width: 50px;
         height: 50px;
         border-radius: 27px;
-        margin: 20px 0;
+    }
+
+    li {
+        width: 611px;
+        min-height: 276px;
+        height: auto;
+        margin-bottom: 30px;
+        border-radius: 16px;
+        background-color: #171717;
+        display: flex;
     }
 
     .icons {
@@ -106,6 +213,11 @@ const PostsList = styled.ul`
 
     .text {
         color: #b7b7b7;
+        a {
+            color: #fff;
+            font-weight: bold;
+            font-family: 'Roboto', sans-serif;
+        }
     }
 
     .description {
@@ -121,7 +233,7 @@ const PostsList = styled.ul`
         color: #cecece;
     }
 
-    @media (max-width: 1100px) {
+    @media (max-width: 1000px) {
         li {
             width: 100%;
         }
@@ -129,6 +241,11 @@ const PostsList = styled.ul`
         button {
             width: auto;
         }
+    }
+
+    a {
+        text-decoration: none;
+        color: #fff;
     }
 `;
 
@@ -169,4 +286,14 @@ const Button = styled.button`
     .url {
         margin-top: 15px;
     }
+`;
+
+const Avatar = styled.div`
+    width: 50px;
+    height: 50px;
+    border-radius: 27px;
+    margin: 20px 0;
+    background-image: ${({ avatar }) => `url(${avatar})`};
+    background-repeat: no-repeat;
+    background-size: cover;
 `;
