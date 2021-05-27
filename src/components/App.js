@@ -6,7 +6,6 @@ import Timeline from './timeline/Timeline';
 import Navbar from './Navbar/Navbar';
 import Login from './login/login';
 import Signup from './login/sign-up';
-import MyPosts from './MyPosts';
 
 export default function App() {
     const [userInfo, setUserInfo] = useState({
@@ -36,7 +35,6 @@ export default function App() {
                     </Route>
                     <Route path="/my-posts">
                         <Navbar />
-                        <MyPosts />
                     </Route>
                     <Route path="/my-likes">
                         <Navbar />
