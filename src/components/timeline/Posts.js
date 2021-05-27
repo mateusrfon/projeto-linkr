@@ -1,10 +1,12 @@
 import styled from 'styled-components';
-import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
+import { AiOutlineHeart, AiFillHeart} from 'react-icons/ai'; 
+import { FiTrash} from 'react-icons/fi';
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import ReactHashtag from 'react-hashtag';
 import UserContext from '../../contexts/UserContext';
 import axios from 'axios';
+import DeletePost from './Deletepost';
 
 export default function Posts({ posts, setPosts, getPosts }) {
     const { userInfo } = useContext(UserContext);
@@ -96,6 +98,7 @@ export default function Posts({ posts, setPosts, getPosts }) {
                             </p>
                         </div>
                         <div className="post-infos">
+                            <TrashCam>{post.user.id === userInfo.user.id?  <FiTrash color="white" onClick={()=>DeletePost(post)}/>:<></> }</TrashCam>
                             <div className="author-name">
                                 <Link to={`/user/${post.user.id}`}>
                                     {post.user.username}
@@ -152,6 +155,7 @@ const PostsList = styled.ul`
         border-radius: 16px;
         background-color: #171717;
         display: flex;
+        position: relative;
     }
 
     .icons {
@@ -259,3 +263,10 @@ const Hashtag = styled.a`
     font-weight: bold;
     font-family: 'Roboto', sans-serif;
 `;
+const TrashCam = styled.span`
+    position: absolute;
+    top: 22px;
+    right: 22px;
+    color: white;
+    
+`
