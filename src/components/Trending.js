@@ -35,7 +35,7 @@ export default function Trending() {
             <div className="links">
                 {hashtags.map((hashtag) => {
                     return (
-                        <div>
+                        <div key={hashtag.id}>
                             <a href={`/hashtag/${hashtag.name}`}>
                                 # {hashtag.name}
                             </a>
