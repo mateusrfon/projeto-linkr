@@ -6,6 +6,7 @@ import Timeline from './timeline/Timeline';
 import Navbar from './Navbar/Navbar';
 import Login from './login/login';
 import Signup from './login/sign-up';
+import Hashtags from './hashtags/Hashtags';
 
 export default function App() {
     const [userInfo, setUserInfo] = useState({
@@ -44,6 +45,7 @@ export default function App() {
                     </Route>
                     <Route path="/hashtag/:hashtag">
                         <Navbar />
+                        <Hashtags />
                     </Route>
                 </Switch>
             </BrowserRouter>
@@ -62,5 +64,9 @@ const GlobalStyle = createGlobalStyle`
         vertical-align: baseline;
         box-sizing: border-box;
         text-decoration: none;
+    }
+
+    body {
+        overflow-x: hidden;
     }
 `;

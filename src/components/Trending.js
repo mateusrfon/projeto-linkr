@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import { useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import UserContext from '../contexts/UserContext';
 
@@ -37,9 +38,9 @@ export default function Trending() {
                     {hashtags.map((hashtag) => {
                         return (
                             <div key={hashtag.id}>
-                                <a href={`/hashtag/${hashtag.name}`}>
+                                <Link to={`/hashtag/${hashtag.name}`}>
                                     # {hashtag.name}
-                                </a>
+                                </Link>
                             </div>
                         );
                     })}
