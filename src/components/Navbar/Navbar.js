@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import React,{ useState, useContext } from 'react';
-import { BrowserRouter, Link } from 'react-router-dom';
+import { BrowserRouter, Link, useHistory } from 'react-router-dom';
 import { IconContext } from "react-icons";
 import { AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
 import UserContext from '../../contexts/UserContext';
@@ -10,6 +10,7 @@ import './icons.css';
 export default function Navbar() {
     const [menu, setMenu] = useState(false);
     const { userInfo, setUserInfo } = useContext(UserContext);
+    const history = useHistory();
 
     function logout() {
         setUserInfo({
@@ -22,6 +23,7 @@ export default function Navbar() {
             }
         });
         localStorage.removeItem('userInfo');
+        history.push('/');
     }
 
     return (
@@ -37,7 +39,7 @@ export default function Navbar() {
                 <BrowserRouter>
                         <Link to='/my-posts'>My posts</Link>
                         <Link to='/my-likes'>My likes</Link>
-                        <Link to='/' onClick={logout}>Logout</Link>
+                        <p onClick={logout}>Logout</p>
                 </BrowserRouter>
             </Menu>
         </StyledNavbar>
@@ -102,6 +104,10 @@ const Menu = styled.div`
     color: #fff;
     font-size: 17px;
     letter-spacing: 5%;
+
+    p {
+        cursor: pointer;
+    }
 
     @media (max-width: 1000px) {
         height: 97px;
