@@ -3,8 +3,9 @@ import { AiOutlineHeart, AiFillHeart} from 'react-icons/ai';
 import { FiTrash} from 'react-icons/fi';
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import ReactHashtag from 'react-hashtag';
+import ReactHashtag from 'react-hashtag'
 import UserContext from '../../contexts/UserContext';
+import ReactTooltip from 'react-tooltip';
 import axios from 'axios';
 import DeletePost from './Deletepost';
 
@@ -61,6 +62,14 @@ export default function Posts({ posts, setPosts, getPosts }) {
     return (
         <PostsList>
             {posts.map((post, i) => {
+                const wasLiked = !(
+                    post.likes.filter((like) => {
+                        return like.userId === userInfo.user.id;
+                    }).length === 0
+                );
+                const likesWithoutUserLike = post.likes.filter((like) => {
+                    return like['user.username'] !== userInfo.user.username;
+                });
                 return (
                     <li key={post.id}>
                         <div className="icons">
@@ -73,9 +82,7 @@ export default function Posts({ posts, setPosts, getPosts }) {
                                 </Link>
                             </div>
                             <div className="likes">
-                                {post.likes.filter((like) => {
-                                    return like.userId === userInfo.user.id;
-                                }).length === 0 ? (
+                                {!wasLiked ? (
                                     <AiOutlineHeart
                                         color="white"
                                         onClick={() => {
@@ -91,11 +98,32 @@ export default function Posts({ posts, setPosts, getPosts }) {
                                     />
                                 )}
                             </div>
-                            <p>
+                            <p
+                                data-tip={
+                                    post.likes.length >= 2 && !wasLiked
+                                        ? post.likes[0]['user.username'] +
+                                          ' e ' +
+                                          post.likes[1]['user.username'] +
+                                          ` curtiram e outras ${
+                                              post.likes.length - 2
+                                          } pessoas`
+                                        : post.likes.length >= 2
+                                        ? `Voce e ${
+                                              likesWithoutUserLike[0][
+                                                  `user.username`
+                                              ]
+                                          } curtiram e outras ${
+                                              post.likes.length - 2
+                                          } pessoas`
+                                        : ''
+                                }
+                                data-event="mouseover"
+                            >
                                 {!('likesAmount' in post)
                                     ? post.likes.length
                                     : post.likesAmount.length}
                             </p>
+                            <ReactTooltip globalEventOff="mouseout" />
                         </div>
                         <div className="post-infos">
                             <TrashCam>{post.user.id === userInfo.user.id?  <FiTrash color="white" onClick={()=>DeletePost(post)}/>:<></> }</TrashCam>
@@ -107,7 +135,10 @@ export default function Posts({ posts, setPosts, getPosts }) {
                             <div className="text">
                                 <ReactHashtag
                                     renderHashtag={(hashtag) => (
-                                        <Hashtag href={`/hashtag/${hashtag}`}>
+                                        <Hashtag
+                                            href={`/hashtag/${hashtag}`}
+                                            key={Math.random()}
+                                        >
                                             {hashtag}
                                         </Hashtag>
                                     )}
