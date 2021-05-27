@@ -187,7 +187,7 @@ const PostsList = styled.ul`
         width: 611px;
         min-height: 276px;
         height: auto;
-        margin-top: 30px;
+        margin-bottom: 30px;
         border-radius: 16px;
         background-color: #171717;
         display: flex;
