@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import React,{ useState, useContext } from 'react';
-import { BrowserRouter, Link, useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { IconContext } from "react-icons";
 import { AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
 import UserContext from '../../contexts/UserContext';
@@ -35,13 +35,13 @@ export default function Navbar() {
                     <img src={userInfo.user.avatar} alt="user"/>
                 </IconContext.Provider>
             </MenuButton>
-            <Menu display={menu.toString()}>
-                <BrowserRouter>
-                        <Link to='/my-posts'>My posts</Link>
-                        <Link to='/my-likes'>My likes</Link>
-                        <p onClick={logout}>Logout</p>
-                </BrowserRouter>
+            {menu && 
+            <Menu>
+                <Link to='/my-posts'>My posts</Link>
+                <Link to='/my-likes'>My likes</Link>
+                <p onClick={logout}>Logout</p>
             </Menu>
+            }
         </StyledNavbar>
     );
 }
@@ -57,6 +57,7 @@ const StyledNavbar = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
+    z-index: 9999;
     @media (max-width: 1000px) {
         padding: 0 14px 0 17px;
     }
@@ -87,17 +88,18 @@ const MenuButton = styled.div`
 
 const Menu = styled.div`
     position: fixed;
-    top: 72px;
+    top: 71px;
     right: 0;
     width: 130px;
     height: 109px;
     background-color: #171717;
-    display: ${props => (props.display === 'true') ? 'flex' : 'none'};
+    display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
     padding: 10px 0 17px 0;
     border-bottom-left-radius: 20px;
+    z-index: 9999;
 
     font-family: 'Lato';
     font-weight: 700;
