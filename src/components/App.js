@@ -19,9 +19,10 @@ export default function App() {
             avatar: '',
         },
     });
+    
 
     return (
-        <UserContext.Provider value={{ userInfo, setUserInfo }}>
+        <UserContext.Provider value={{ userInfo, setUserInfo}}>
             <GlobalStyle />
             <BrowserRouter>
                 <Switch>
