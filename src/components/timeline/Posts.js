@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import ReactHashtag from 'react-hashtag'
+import ReactHashtag from 'react-hashtag';
 import UserContext from '../../contexts/UserContext';
 import ReactTooltip from 'react-tooltip';
 import axios from 'axios';
@@ -176,7 +176,7 @@ const PostsList = styled.ul`
     }
 
     li {
-        width: 45%;
+        width: 611px;
         min-height: 276px;
         height: auto;
         margin-top: 30px;
@@ -220,7 +220,7 @@ const PostsList = styled.ul`
         color: #cecece;
     }
 
-    @media (max-width: 1100px) {
+    @media (max-width: 1000px) {
         li {
             width: 100%;
         }
