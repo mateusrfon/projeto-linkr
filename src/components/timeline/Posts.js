@@ -132,12 +132,20 @@ export default function Posts({ posts, setPosts, getPosts }) {
                             <div className="text">
                                 <ReactHashtag
                                     renderHashtag={(hashtag) => (
-                                        <Hashtag
-                                            href={`/hashtag/${hashtag}`}
+                                        <Link
                                             key={Math.random()}
+                                            to={`/hashtag/${
+                                                hashtag[0] === '#'
+                                                    ? hashtag.slice(
+                                                          1,
+                                                          hashtag.length
+                                                      )
+                                                    : hashtag
+                                            }`}
                                         >
+                                            {' '}
                                             {hashtag}
-                                        </Hashtag>
+                                        </Link>
                                     )}
                                 >
                                     {post.text}
@@ -205,6 +213,11 @@ const PostsList = styled.ul`
 
     .text {
         color: #b7b7b7;
+        a {
+            color: #fff;
+            font-weight: bold;
+            font-family: 'Roboto', sans-serif;
+        }
     }
 
     .description {
@@ -283,10 +296,4 @@ const Avatar = styled.div`
     background-image: ${({ avatar }) => `url(${avatar})`};
     background-repeat: no-repeat;
     background-size: cover;
-`;
-
-const Hashtag = styled.a`
-    color: #fff;
-    font-weight: bold;
-    font-family: 'Roboto', sans-serif;
 `;
