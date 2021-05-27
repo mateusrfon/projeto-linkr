@@ -27,8 +27,8 @@ export default function Main(props) {
                         setPosts={props.setPosts}
                     />
                 )}
+                <Trending />
             </div>
-            <Trending />
         </Page>
     );
 }
@@ -40,18 +40,22 @@ const Page = styled.main`
     margin-top: 72px;
     display: flex;
     justify-content: center;
+    position: relative;
 
     .container {
         width: 80%;
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 1100px) {
         .container {
             width: 100%;
         }
 
         h1 {
             margin-left: 17px;
+        }
+        aside {
+            display: none;
         }
     }
 `;
