@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { AiOutlineHeart, AiFillHeart} from 'react-icons/ai'; 
 import { FiTrash} from 'react-icons/fi';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ReactHashtag from 'react-hashtag'
 import UserContext from '../../contexts/UserContext';
@@ -11,6 +11,7 @@ import DeletePost from './Deletepost';
 
 export default function Posts({ posts, setPosts, getPosts }) {
     const { userInfo } = useContext(UserContext);
+    const [modal, setModal] = useState(false)
 
     const config = {
         headers: {
@@ -58,6 +59,8 @@ export default function Posts({ posts, setPosts, getPosts }) {
             });
         }
     }
+
+   
 
     return (
         <PostsList>
@@ -126,7 +129,8 @@ export default function Posts({ posts, setPosts, getPosts }) {
                             <ReactTooltip globalEventOff="mouseout" />
                         </div>
                         <div className="post-infos">
-                            <TrashCam>{post.user.id === userInfo.user.id?  <FiTrash color="white" onClick={()=>DeletePost(post)}/>:<></> }</TrashCam>
+                            <TrashCam>{post.user.id === userInfo.user.id?  <FiTrash color="white" onClick={()=>setModal(true)}/>:<></> }</TrashCam>
+                            {modal && <DeletePost post={post} userInfo={userInfo} getPosts={getPosts} modal={modal} setModal={setModal}/>}
                             <div className="author-name">
                                 <Link to={`/user/${post.user.id}`}>
                                     {post.user.username}
@@ -166,6 +170,7 @@ export default function Posts({ posts, setPosts, getPosts }) {
             })}
         </PostsList>
     );
+    
 }
 
 const PostsList = styled.ul`
