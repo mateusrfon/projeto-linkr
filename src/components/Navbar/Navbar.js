@@ -126,4 +126,5 @@ const Outer = styled.div`
     left: 0;
     width: 100vw;
     height: calc(100vh - 72px);
+    z-index: 899;
 `;
