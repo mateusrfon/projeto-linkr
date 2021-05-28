@@ -9,7 +9,7 @@ export default function Timeline() {
     const [isLoading, setIsLoading] = useState(false);
     const { userInfo } = useContext(UserContext);
 
-    function teste(array) {
+    function attData(array) {
         setData(array);
         handleGetPosts();
     }
@@ -47,7 +47,7 @@ export default function Timeline() {
     return (
         <Main
             posts={data}
-            setPosts={teste}
+            setPosts={attData}
             title="timeline"
             loading={isLoading}
             getPosts={handleGetPosts}
