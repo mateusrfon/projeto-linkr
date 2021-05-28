@@ -7,7 +7,7 @@ import UserContext from '../../contexts/UserContext';
 import ReactTooltip from 'react-tooltip';
 import axios from 'axios';
 
-export default function Posts({ posts, setPosts, getPosts }) {
+export default function Posts({ posts, getPosts }) {
     const { userInfo } = useContext(UserContext);
 
     const config = {
@@ -37,9 +37,6 @@ export default function Posts({ posts, setPosts, getPosts }) {
             );
 
             promise.then((response) => {
-                let newPosts = [...posts];
-                newPosts[i].likesAmount = response.data.post.likes;
-                setPosts(newPosts);
                 getPosts(false);
             });
         } else {
@@ -50,9 +47,6 @@ export default function Posts({ posts, setPosts, getPosts }) {
             );
             promise.then((response) => {
                 getPosts(false);
-                let newPosts = [...posts];
-                newPosts[i].likesAmount = [];
-                setPosts(newPosts);
             });
         }
     }
@@ -98,7 +92,9 @@ export default function Posts({ posts, setPosts, getPosts }) {
                             </div>
                             <p
                                 data-tip={
-                                    post.likes.length >= 2 && !wasLiked
+                                    post.likes.length === 1
+                                        ? `${post.likes[0][`user.username`]}`
+                                        : post.likes.length >= 2 && !wasLiked
                                         ? post.likes[0]['user.username'] +
                                           ' e ' +
                                           post.likes[1]['user.username'] +
@@ -117,9 +113,7 @@ export default function Posts({ posts, setPosts, getPosts }) {
                                 }
                                 data-event="mouseover"
                             >
-                                {!('likesAmount' in post)
-                                    ? post.likes.length
-                                    : post.likesAmount.length}
+                                {post.likes.length}
                             </p>
                             <ReactTooltip globalEventOff="mouseout" />
                         </div>

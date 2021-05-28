@@ -21,6 +21,7 @@ export default function Hashtags() {
 
         promise.then((response) => {
             setData(response.data.posts);
+            console.log(response.data.posts);
         });
     }, [userInfo.token, hashtag]);
 
