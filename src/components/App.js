@@ -6,8 +6,8 @@ import Timeline from './timeline/Timeline';
 import Navbar from './Navbar/Navbar';
 import Login from './login/login';
 import Signup from './login/sign-up';
+import UserPosts from './UserPosts';
 import Hashtags from './hashtags/Hashtags';
-import MyPosts from './MyPosts';
 
 export default function App() {
     const [userInfo, setUserInfo] = useState({
@@ -19,9 +19,10 @@ export default function App() {
             avatar: '',
         },
     });
+    
 
     return (
-        <UserContext.Provider value={{ userInfo, setUserInfo }}>
+        <UserContext.Provider value={{ userInfo, setUserInfo}}>
             <GlobalStyle />
             <BrowserRouter>
                 <Switch>
@@ -37,13 +38,14 @@ export default function App() {
                     </Route>
                     <Route path="/my-posts">
                         <Navbar />
-                        <MyPosts />
+                        <UserPosts />
                     </Route>
                     <Route path="/my-likes">
                         <Navbar />
                     </Route>
                     <Route path="/user/:id">
                         <Navbar />
+                        <UserPosts />
                     </Route>
                     <Route path="/hashtag/:hashtag">
                         <Navbar />
