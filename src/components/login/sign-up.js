@@ -85,7 +85,7 @@ let Container = styled.div`
     display: flex;
     color: #fff;
     font-family: 'Passion One';
-    @media (max-width: 375px) {
+    @media (max-width: 1000px) {
         flex-direction: column;
     }
 `;
@@ -108,7 +108,7 @@ let Front = styled.div`
         font-size: 43px;
         width: 450px;
     }
-    @media (max-width: 375px) {
+    @media (max-width: 1000px) {
         width: 100vw;
         height: 175px;
         min-height: 175px;
@@ -167,7 +167,7 @@ let Inputs = styled.div`
             margin: 10px 0 0 0;
         }
     }
-    @media (max-width: 375px) {
+    @media (max-width: 1000px) {
         width: 100vw;
         align-items: start;
         margin: 40px 0 0 0;

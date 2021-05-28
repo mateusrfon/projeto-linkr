@@ -130,7 +130,7 @@ export default function Posts({ posts, setPosts, getPosts }) {
                         </div>
                         <div className="post-infos">
                             <TrashCam>{post.user.id === userInfo.user.id?  <FiTrash color="white" onClick={()=>setModal(post.id)}/>:<></> }</TrashCam>
-                            {modal ===post.id? <DeletePost post={post} userInfo={userInfo} getPosts={getPosts} modal={modal} setModal={setModal}/> :null}
+                            {modal === post.id? <DeletePost post={post} userInfo={userInfo} getPosts={getPosts} modal={modal} setModal={setModal}/> :null}
                             <div className="author-name">
                                 <Link to={`/user/${post.user.id}`}>
                                     {post.user.username}
