@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useCallback, useContext, useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 import UserContext from '../../contexts/UserContext';
 import Main from '../Main';
 
@@ -7,6 +8,7 @@ export default function MyLikes() {
     const { userInfo } = useContext(UserContext);
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const history = useHistory();
 
     const handleGetPosts = useCallback(
         (isFirstTime) => {
@@ -34,10 +36,14 @@ export default function MyLikes() {
 
             promise.catch((error) => {
                 setIsLoading(false);
-                alert('Houve um erro por favor recarregue a pagina');
+                if (!userInfo.token && error.response.status === 400) {
+                    history.push('/');
+                } else {
+                    alert('ERRO, RECARREGUE A PAGINA OU LOGUE NOVAMENTE');
+                }
             });
         },
-        [userInfo.token]
+        [userInfo.token, history]
     );
 
     useEffect(() => {
