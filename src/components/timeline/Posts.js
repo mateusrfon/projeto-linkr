@@ -168,6 +168,7 @@ export default function Posts({ posts, getPosts, setPosts }) {
                             <ReactTooltip globalEventOff="mouseout" />
                         </div>
                         <div className="post-infos">
+
                             <Icons>
                                 {post.user.id === userInfo.user.id?  <span><TiPencil color="white" onClick={() => SwitchEditPost(post, setNewText, setEdit)}/></span> : null }
                                 {post.user.id === userInfo.user.id?  <FiTrash color="white" onClick={()=>setModal(post.id)}/> : null }

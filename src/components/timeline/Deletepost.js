@@ -1,5 +1,5 @@
 import axios from "axios"
-import React,{useContext, useEffect, useState} from 'react';
+import React,{useState} from 'react';
 import styled from 'styled-components';
 
 
@@ -61,6 +61,11 @@ const Confirm = styled.div`
         flex-direction: column;
         justify-content: space-around;
         align-items: center;
+        box-shadow:4px 0px 4px rgba(0, 0, 0, 0.25); 
+        @media(max-width:1000px){
+            width: 90vw;
+            
+        }
         span{
             display: flex;
             justify-content: center;
@@ -69,6 +74,12 @@ const Confirm = styled.div`
         h1{
             color: #fff;
             font-size: 34px;
+
+            @media(max-width:1000px){
+            font-size:20px ;
+            text-align: center;
+            
+        }
         }
         button{ 
             width: 10vw;
@@ -76,6 +87,13 @@ const Confirm = styled.div`
             border-radius: 5px;
             font-size: 18px;
             margin: 0 3vw;
+
+            @media(max-width:1000px){
+            width: 25vw;
+            height: 6vh;
+            
+        }
+            
         }
     }
 `
