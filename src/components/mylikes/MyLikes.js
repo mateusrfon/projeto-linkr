@@ -1,20 +1,14 @@
-import Main from '../Main';
 import axios from 'axios';
-import { useContext, useEffect, useState } from 'react';
-import UserContext from '../../contexts/UserContext';
-import { useCallback } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
+import UserContext from '../../contexts/UserContext';
+import Main from '../Main';
 
-export default function Timeline() {
+export default function MyLikes() {
+    const { userInfo } = useContext(UserContext);
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const { userInfo } = useContext(UserContext);
     const history = useHistory();
-
-    function attData(array) {
-        setData(array);
-        handleGetPosts();
-    }
 
     const handleGetPosts = useCallback(
         (isFirstTime) => {
@@ -22,16 +16,22 @@ export default function Timeline() {
                 setIsLoading(true);
             }
             const promise = axios.get(
-                'https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts',
+                `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/liked`,
                 {
                     headers: {
                         Authorization: `Bearer ${userInfo.token}`,
                     },
                 }
             );
+
             promise.then((response) => {
-                setIsLoading(false);
+                response.data.posts.forEach((post) => {
+                    post.likes.forEach((like) => {
+                        like.userId = like.id;
+                    });
+                });
                 setData(response.data.posts);
+                setIsLoading(false);
             });
 
             promise.catch((error) => {
@@ -53,8 +53,8 @@ export default function Timeline() {
     return (
         <Main
             posts={data}
-            setPosts={attData}
-            title="timeline"
+            setPosts={setData}
+            title={`my likes`}
             loading={isLoading}
             getPosts={handleGetPosts}
         />
