@@ -1,11 +1,9 @@
 import axios from 'axios';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router';
 import UserContext from '../../contexts/UserContext';
 import Main from '../Main';
 
-export default function Hashtags() {
-    let { hashtag } = useParams();
+export default function MyLikes() {
     const { userInfo } = useContext(UserContext);
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -16,7 +14,7 @@ export default function Hashtags() {
                 setIsLoading(true);
             }
             const promise = axios.get(
-                `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/hashtags/${hashtag}/posts`,
+                `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/liked`,
                 {
                     headers: {
                         Authorization: `Bearer ${userInfo.token}`,
@@ -34,7 +32,7 @@ export default function Hashtags() {
                 alert('Houve um erro por favor recarregue a pagina');
             });
         },
-        [userInfo.token, hashtag]
+        [userInfo.token]
     );
 
     useEffect(() => {
@@ -45,7 +43,7 @@ export default function Hashtags() {
         <Main
             posts={data}
             setPosts={setData}
-            title={`# ${hashtag}`}
+            title={`my likes`}
             loading={isLoading}
             getPosts={handleGetPosts}
         />
