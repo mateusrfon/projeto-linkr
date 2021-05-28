@@ -10,7 +10,7 @@ import ReactTooltip from 'react-tooltip';
 import axios from 'axios';
 import DeletePost from './Deletepost';
 
-export default function Posts({ posts, getPosts }) {
+export default function Posts({ posts, getPosts, setPosts }) {
     const { userInfo } = useContext(UserContext);
     const [modal, setModal] = useState(false);
     const [edit, setEdit] = useState(false);
