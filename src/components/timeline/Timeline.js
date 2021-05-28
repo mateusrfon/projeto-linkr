@@ -9,6 +9,11 @@ export default function Timeline() {
     const [isLoading, setIsLoading] = useState(false);
     const { userInfo } = useContext(UserContext);
 
+    function teste(array) {
+        setData(array);
+        handleGetPosts();
+    }
+
     const handleGetPosts = useCallback(
         (isFirstTime) => {
             if (isFirstTime) {
@@ -42,7 +47,7 @@ export default function Timeline() {
     return (
         <Main
             posts={data}
-            setPosts={setData}
+            setPosts={teste}
             title="timeline"
             loading={isLoading}
             getPosts={handleGetPosts}

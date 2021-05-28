@@ -23,6 +23,11 @@ export default function MyLikes() {
             );
 
             promise.then((response) => {
+                response.data.posts.forEach((post) => {
+                    post.likes.forEach((like) => {
+                        like.userId = like.id;
+                    });
+                });
                 setData(response.data.posts);
                 setIsLoading(false);
             });

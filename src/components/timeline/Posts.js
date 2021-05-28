@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { AiOutlineHeart, AiFillHeart} from 'react-icons/ai'; 
-import { FiTrash} from 'react-icons/fi';
+import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
+import { FiTrash } from 'react-icons/fi';
 import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ReactHashtag from 'react-hashtag';
@@ -9,9 +9,9 @@ import ReactTooltip from 'react-tooltip';
 import axios from 'axios';
 import DeletePost from './Deletepost';
 
-export default function Posts({ posts, getPosts }) {
+export default function Posts({ posts, getPosts, setPosts }) {
     const { userInfo } = useContext(UserContext);
-    const [modal, setModal] = useState(false)
+    const [modal, setModal] = useState(false);
 
     const config = {
         headers: {
@@ -40,7 +40,9 @@ export default function Posts({ posts, getPosts }) {
             );
 
             promise.then((response) => {
-                getPosts(false);
+                let newPosts = [...posts];
+                newPosts[i].likes = response.data.post.likes;
+                setPosts(newPosts);
             });
         } else {
             const promise = axios.post(
@@ -49,12 +51,12 @@ export default function Posts({ posts, getPosts }) {
                 config
             );
             promise.then((response) => {
-                getPosts(false);
+                let newPosts = [...posts];
+                newPosts[i].likes = response.data.post.likes;
+                setPosts(newPosts);
             });
         }
     }
-
-   
 
     return (
         <PostsList>
@@ -64,6 +66,7 @@ export default function Posts({ posts, getPosts }) {
                         return like.userId === userInfo.user.id;
                     }).length === 0
                 );
+
                 const likesWithoutUserLike = post.likes.filter((like) => {
                     return like['user.username'] !== userInfo.user.username;
                 });
@@ -123,8 +126,25 @@ export default function Posts({ posts, getPosts }) {
                             <ReactTooltip globalEventOff="mouseout" />
                         </div>
                         <div className="post-infos">
-                            <TrashCam>{post.user.id === userInfo.user.id?  <FiTrash color="white" onClick={()=>setModal(post.id)}/>:<></> }</TrashCam>
-                            {modal ===post.id? <DeletePost post={post} userInfo={userInfo} getPosts={getPosts} modal={modal} setModal={setModal}/> :null}
+                            <TrashCam>
+                                {post.user.id === userInfo.user.id ? (
+                                    <FiTrash
+                                        color="white"
+                                        onClick={() => setModal(post.id)}
+                                    />
+                                ) : (
+                                    <></>
+                                )}
+                            </TrashCam>
+                            {modal === post.id ? (
+                                <DeletePost
+                                    post={post}
+                                    userInfo={userInfo}
+                                    getPosts={getPosts}
+                                    modal={modal}
+                                    setModal={setModal}
+                                />
+                            ) : null}
                             <div className="author-name">
                                 <Link to={`/user/${post.user.id}`}>
                                     {post.user.username}
@@ -172,7 +192,6 @@ export default function Posts({ posts, getPosts }) {
             })}
         </PostsList>
     );
-    
 }
 
 const PostsList = styled.ul`
@@ -306,5 +325,4 @@ const TrashCam = styled.span`
     top: 22px;
     right: 22px;
     color: white;
-    
-`
+`;
