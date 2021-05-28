@@ -4,12 +4,15 @@ import { useContext, useEffect, useState } from 'react';
 import UserContext from '../../contexts/UserContext';
 import { useCallback } from 'react';
 import { useHistory } from 'react-router';
+import LocalLogin from '../login/LocalLogin';
 
 export default function Timeline() {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const { userInfo } = useContext(UserContext);
     const history = useHistory();
+
+    LocalLogin("/timeline");
 
     function attData(array) {
         setData(array);
@@ -32,15 +35,6 @@ export default function Timeline() {
             promise.then((response) => {
                 setIsLoading(false);
                 setData(response.data.posts);
-            });
-
-            promise.catch((error) => {
-                setIsLoading(false);
-                if (!userInfo.token && error.response.status === 400) {
-                    history.push('/');
-                } else {
-                    alert('ERRO, RECARREGUE A PAGINA OU LOGUE NOVAMENTE');
-                }
             });
         },
         [userInfo.token, history]

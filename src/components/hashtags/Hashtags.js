@@ -3,6 +3,7 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 import UserContext from '../../contexts/UserContext';
 import Main from '../Main';
+import LocalLogin from '../login/LocalLogin';
 
 export default function Hashtags() {
     let { hashtag } = useParams();
@@ -10,6 +11,8 @@ export default function Hashtags() {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const history = useHistory();
+
+    LocalLogin(`/hashtag/${hashtag}`);
 
     const handleGetPosts = useCallback(
         (isFirstTime) => {
@@ -28,15 +31,6 @@ export default function Hashtags() {
             promise.then((response) => {
                 setData(response.data.posts);
                 setIsLoading(false);
-            });
-
-            promise.catch((error) => {
-                setIsLoading(false);
-                if (!userInfo.token && error.response.status === 400) {
-                    history.push('/');
-                } else {
-                    alert('ERRO, RECARREGUE A PAGINA OU LOGUE NOVAMENTE');
-                }
             });
         },
         [userInfo.token, hashtag, history]
