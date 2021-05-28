@@ -8,6 +8,7 @@ import Login from './login/login';
 import Signup from './login/sign-up';
 import UserPosts from './UserPosts';
 import Hashtags from './hashtags/Hashtags';
+import MyLikes from './mylikes/MyLikes';
 
 export default function App() {
     const [userInfo, setUserInfo] = useState({
@@ -19,10 +20,9 @@ export default function App() {
             avatar: '',
         },
     });
-    
 
     return (
-        <UserContext.Provider value={{ userInfo, setUserInfo}}>
+        <UserContext.Provider value={{ userInfo, setUserInfo }}>
             <GlobalStyle />
             <BrowserRouter>
                 <Switch>
@@ -42,6 +42,7 @@ export default function App() {
                     </Route>
                     <Route path="/my-likes">
                         <Navbar />
+                        <MyLikes />
                     </Route>
                     <Route path="/user/:id">
                         <Navbar />

@@ -44,7 +44,9 @@ export default function Posts({ posts, getPosts, setPosts }) {
             );
 
             promise.then((response) => {
-                getPosts(false);
+                let newPosts = [...posts];
+                newPosts[i].likes = response.data.post.likes;
+                setPosts(newPosts);
             });
         } else {
             const promise = axios.post(
@@ -53,7 +55,9 @@ export default function Posts({ posts, getPosts, setPosts }) {
                 config
             );
             promise.then((response) => {
-                getPosts(false);
+                let newPosts = [...posts];
+                newPosts[i].likes = response.data.post.likes;
+                setPosts(newPosts);
             });
         }
     }
@@ -104,6 +108,7 @@ export default function Posts({ posts, getPosts, setPosts }) {
                         return like.userId === userInfo.user.id;
                     }).length === 0
                 );
+
                 const likesWithoutUserLike = post.likes.filter((like) => {
                     return like['user.username'] !== userInfo.user.username;
                 });
@@ -218,7 +223,6 @@ export default function Posts({ posts, getPosts, setPosts }) {
             })}
         </PostsList>
     );
-    
 }
 
 const PostsList = styled.ul`
@@ -229,6 +233,13 @@ const PostsList = styled.ul`
         width: 50px;
         height: 50px;
         border-radius: 27px;
+    }
+
+    .user-info {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 
     li {
@@ -252,7 +263,8 @@ const PostsList = styled.ul`
     .post-infos {
         width: 82%;
         height: 90%;
-        margin: auto;
+        margin-top: 20px;
+        margin-left: 10px;
         word-break: break-all;
     }
 
@@ -271,10 +283,19 @@ const PostsList = styled.ul`
 
     .description {
         color: #9b9595;
+        height: 7ex;
+        overflow: hidden;
     }
 
     .link-title {
         font-size: 16px;
+        height: 7ex;
+        overflow: hidden;
+    }
+
+    .url {
+        height: 3ex;
+        overflow: hidden;
     }
 
     .link-title,
@@ -308,6 +329,7 @@ const Button = styled.button`
     height: auto;
     min-height: 155px;
     width: 90%;
+    max-height: 10ch;
     background-image: ${({ img }) => `url(${img})`};
     background-repeat: no-repeat;
     background-size: 40% 100%;

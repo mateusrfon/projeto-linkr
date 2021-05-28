@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import UserContext from '../contexts/UserContext';
 import { useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
 export default function UserPosts() {
     const [data, setData] = useState([]);
@@ -11,6 +11,8 @@ export default function UserPosts() {
     const [isLoading, setIsLoading] = useState(false);
     const { userInfo } = useContext(UserContext);
     const id = useParams().id || userInfo.user.id;
+
+    const history = useHistory();
 
     const handleGetPosts = useCallback(
         (isFirstTime) => {
@@ -32,10 +34,14 @@ export default function UserPosts() {
 
             promise.catch((error) => {
                 setIsLoading(false);
-                alert('Houve um erro por favor recarregue a pagina');
+                if (!userInfo.token && error.response.status === 400) {
+                    history.push('/');
+                } else {
+                    alert('ERRO, RECARREGUE A PAGINA OU LOGUE NOVAMENTE');
+                }
             });
         },
-        [id]
+        [id, userInfo.token, history]
     );
 
     useEffect(() => {
@@ -46,7 +52,13 @@ export default function UserPosts() {
         <Main
             posts={data}
             setPosts={setData}
-            title={useParams().id ? (data[0] ? data[0].user.username : 'carregando' ) : "my posts"}
+            title={
+                useParams().id
+                    ? data[0]
+                        ? data[0].user.username
+                        : 'carregando'
+                    : 'my posts'
+            }
             loading={isLoading}
             getPosts={handleGetPosts}
         />
