@@ -36,11 +36,14 @@ export default function Navbar() {
                 </IconContext.Provider>
             </MenuButton>
             {menu && 
-            <Menu>
-                <Link to='/my-posts'>My posts</Link>
-                <Link to='/my-likes'>My likes</Link>
-                <p onClick={logout}>Logout</p>
-            </Menu>
+            <>
+                <Outer onClick={() => setMenu(false)} />
+                <Menu>
+                    <Link to='/my-posts' onClick={() => setMenu(false)}>My posts</Link>
+                    <Link to='/my-likes' onClick={() => setMenu(false)}>My likes</Link>
+                    <p onClick={logout}>Logout</p>
+                </Menu>
+            </>
             }
         </StyledNavbar>
     );
@@ -99,7 +102,7 @@ const Menu = styled.div`
     align-items: center;
     padding: 10px 0 17px 0;
     border-bottom-left-radius: 20px;
-    z-index: 9999;
+    z-index: 900;
 
     font-family: 'Lato';
     font-weight: 700;
@@ -115,4 +118,12 @@ const Menu = styled.div`
         height: 97px;
         font-size: 15px;
     }
+`;
+
+const Outer = styled.div`
+    position: fixed;
+    top: 72px;
+    left: 0;
+    width: 100vw;
+    height: calc(100vh - 72px);
 `;
