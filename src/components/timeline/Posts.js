@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import { AiOutlineHeart, AiFillHeart} from 'react-icons/ai'; 
-import { FiTrash} from 'react-icons/fi';
-import { useContext, useState } from 'react';
+import { FiTrash } from 'react-icons/fi';
+import { TiPencil } from 'react-icons/ti';
+import { useContext, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import ReactHashtag from 'react-hashtag';
 import UserContext from '../../contexts/UserContext';
@@ -11,7 +12,10 @@ import DeletePost from './Deletepost';
 
 export default function Posts({ posts, getPosts }) {
     const { userInfo } = useContext(UserContext);
-    const [modal, setModal] = useState(false)
+    const [modal, setModal] = useState(false);
+    const [edit, setEdit] = useState(false);
+    const [newText, setNewText] = useState('');
+    const [wait, setWait] = useState(false);
 
     const config = {
         headers: {
@@ -54,7 +58,43 @@ export default function Posts({ posts, getPosts }) {
         }
     }
 
-   
+    function SwitchEditPost(post, setNewText, setEdit) {
+       if (edit === post.id) {
+           setEdit(false);
+       } else {
+           setEdit(post.id);
+           setNewText(post.text);
+       }
+    }
+
+    function EndEditPost(e, post, body, config, setEdit) {
+        if (e.which === 27) {
+            setEdit(false)
+        } else if (e.which === 13 ) {
+            e.preventDefault();
+            EditPost(post, body, config)
+        }
+    }
+
+    function EditPost(post, body, config) {
+        setWait(true);
+        const request = axios.put(`https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/${post.id}`, body, config);
+        request.then(r => {
+            setWait(false);
+            setEdit(false);
+            const newPosts = posts.map(e => {
+                if (e.id === post.id) {
+                    return r.data.post;
+                }
+                return e;
+            })
+            setPosts(newPosts);
+        });
+        request.catch(() => {
+            alert('Não foi possível realizar as alterações');
+            setWait(false);
+        });
+    }
 
     return (
         <PostsList>
@@ -123,34 +163,40 @@ export default function Posts({ posts, getPosts }) {
                             <ReactTooltip globalEventOff="mouseout" />
                         </div>
                         <div className="post-infos">
-                            <TrashCam>{post.user.id === userInfo.user.id?  <FiTrash color="white" onClick={()=>setModal(post.id)}/>:<></> }</TrashCam>
-                            {modal ===post.id? <DeletePost post={post} userInfo={userInfo} getPosts={getPosts} modal={modal} setModal={setModal}/> :null}
+                            <Icons>
+                                {post.user.id === userInfo.user.id?  <span><TiPencil color="white" onClick={() => SwitchEditPost(post, setNewText, setEdit)}/></span> : null }
+                                {post.user.id === userInfo.user.id?  <FiTrash color="white" onClick={()=>setModal(post.id)}/> : null }
+                            </Icons>
+                            {modal === post.id? <DeletePost post={post} userInfo={userInfo} getPosts={getPosts} modal={modal} setModal={setModal}/> :null}
                             <div className="author-name">
                                 <Link to={`/user/${post.user.id}`}>
                                     {post.user.username}
                                 </Link>
                             </div>
                             <div className="text">
-                                <ReactHashtag
-                                    renderHashtag={(hashtag) => (
-                                        <Link
-                                            key={Math.random()}
-                                            to={`/hashtag/${
-                                                hashtag[0] === '#'
-                                                    ? hashtag.slice(
-                                                          1,
-                                                          hashtag.length
-                                                      )
-                                                    : hashtag
-                                            }`}
-                                        >
-                                            {' '}
-                                            {hashtag}
-                                        </Link>
-                                    )}
-                                >
-                                    {post.text}
-                                </ReactHashtag>
+                                {(edit === post.id) 
+                                ? <EditText disabled={wait} autoFocus value={newText} onChange={(e) => setNewText(e.target.value)} onKeyDown={(e) => EndEditPost(e, post, { text: newText }, config, setEdit)}/>
+                                : <ReactHashtag
+                                renderHashtag={(hashtag) => (
+                                    <Link
+                                        key={Math.random()}
+                                        to={`/hashtag/${
+                                            hashtag[0] === '#'
+                                                ? hashtag.slice(
+                                                      1,
+                                                      hashtag.length
+                                                  )
+                                                : hashtag
+                                        }`}
+                                    >
+                                        {' '}
+                                        {hashtag}
+                                    </Link>
+                                )}
+                            >
+                                {post.text}
+                            </ReactHashtag>
+                            }
                             </div>
                             <Button
                                 img={post.linkImage}
@@ -301,10 +347,30 @@ const Avatar = styled.div`
     background-size: cover;
 `;
 
-const TrashCam = styled.span`
+const Icons = styled.span`
     position: absolute;
     top: 22px;
     right: 22px;
     color: white;
-    
-`
+    cursor: pointer;
+    span {
+        margin-right: 12.5px;
+    }
+`;
+
+const EditText = styled.textarea`
+    resize: none;
+    width: 503px;
+    margin-top: 7px;
+    padding: 4px 9px;
+    border-radius: 7px;
+    overflow: hidden;
+    :focus {
+        box-shadow: 0 0 0 0;
+        outline: 0;
+    }
+    @media (max-width: 1000px) {
+        width: 100%;
+        border-radius: none;
+    }
+`;
