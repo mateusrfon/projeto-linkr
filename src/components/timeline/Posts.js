@@ -145,32 +145,34 @@ export default function Posts({ posts, getPosts, setPosts }) {
                                     setModal={setModal}
                                 />
                             ) : null}
-                            <div className="author-name">
-                                <Link to={`/user/${post.user.id}`}>
-                                    {post.user.username}
-                                </Link>
-                            </div>
-                            <div className="text">
-                                <ReactHashtag
-                                    renderHashtag={(hashtag) => (
-                                        <Link
-                                            key={Math.random()}
-                                            to={`/hashtag/${
-                                                hashtag[0] === '#'
-                                                    ? hashtag.slice(
-                                                          1,
-                                                          hashtag.length
-                                                      )
-                                                    : hashtag
-                                            }`}
-                                        >
-                                            {' '}
-                                            {hashtag}
-                                        </Link>
-                                    )}
-                                >
-                                    {post.text}
-                                </ReactHashtag>
+                            <div className="user-info">
+                                <div className="author-name">
+                                    <Link to={`/user/${post.user.id}`}>
+                                        {post.user.username}
+                                    </Link>
+                                </div>
+                                <div className="text">
+                                    <ReactHashtag
+                                        renderHashtag={(hashtag) => (
+                                            <Link
+                                                key={Math.random()}
+                                                to={`/hashtag/${
+                                                    hashtag[0] === '#'
+                                                        ? hashtag.slice(
+                                                              1,
+                                                              hashtag.length
+                                                          )
+                                                        : hashtag
+                                                }`}
+                                            >
+                                                {' '}
+                                                {hashtag}
+                                            </Link>
+                                        )}
+                                    >
+                                        {post.text}
+                                    </ReactHashtag>
+                                </div>
                             </div>
                             <Button
                                 img={post.linkImage}
@@ -204,6 +206,13 @@ const PostsList = styled.ul`
         border-radius: 27px;
     }
 
+    .user-info {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
     li {
         width: 611px;
         min-height: 276px;
@@ -225,7 +234,8 @@ const PostsList = styled.ul`
     .post-infos {
         width: 82%;
         height: 90%;
-        margin: auto;
+        margin-top: 20px;
+        margin-left: 10px;
         word-break: break-all;
     }
 
@@ -244,10 +254,19 @@ const PostsList = styled.ul`
 
     .description {
         color: #9b9595;
+        height: 7ex;
+        overflow: hidden;
     }
 
     .link-title {
         font-size: 16px;
+        height: 7ex;
+        overflow: hidden;
+    }
+
+    .url {
+        height: 3ex;
+        overflow: hidden;
     }
 
     .link-title,
@@ -281,6 +300,7 @@ const Button = styled.button`
     height: auto;
     min-height: 155px;
     width: 90%;
+    max-height: 10ch;
     background-image: ${({ img }) => `url(${img})`};
     background-repeat: no-repeat;
     background-size: 40% 100%;
