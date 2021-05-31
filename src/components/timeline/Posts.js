@@ -10,12 +10,28 @@ import ReactTooltip from 'react-tooltip';
 import axios from 'axios';
 import DeletePost from './Deletepost';
 
+
+import YouTube from 'react-youtube'
+var getYouTubeID = require("get-youtube-id");
+
+
 export default function Posts({ posts, getPosts, setPosts }) {
     const { userInfo } = useContext(UserContext);
     const [modal, setModal] = useState(false);
     const [edit, setEdit] = useState(false);
     const [newText, setNewText] = useState('');
     const [wait, setWait] = useState(false);
+
+
+
+    const opts = {
+        height: '270',
+        width: '480',
+        playerVars: {
+          // https://developers.google.com/youtube/player_parameters
+          autoplay: 0,
+        },
+      };
 
     const config = {
         headers: {
@@ -204,6 +220,8 @@ export default function Posts({ posts, getPosts, setPosts }) {
                             </ReactHashtag>
                             }
                             </div>
+                            {post.link.includes("www.youtube.com")?
+                            <YTVideo><YouTube videoId={getYouTubeID(post.link)} opts={opts} id={post.link}  /> {post.link}</YTVideo>:
                             <Button
                                 img={post.linkImage}
                                 onClick={() => {
@@ -217,7 +235,8 @@ export default function Posts({ posts, getPosts, setPosts }) {
                                     {post.linkDescription}
                                 </div>
                                 <div className="url">{post.link}</div>
-                            </Button>
+                                
+                            </Button>}
                         </div>
                     </li>
                 );
@@ -397,3 +416,6 @@ const EditText = styled.textarea`
         border-radius: none;
     }
 `;
+const YTVideo = styled.div`
+    margin:15px;
+`
