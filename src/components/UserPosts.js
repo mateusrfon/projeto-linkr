@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 import UserContext from '../contexts/UserContext';
 import { useCallback } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
+import LocalLogin from './login/LocalLogin';
 
 export default function UserPosts() {
     const [data, setData] = useState([]);
@@ -11,6 +12,12 @@ export default function UserPosts() {
     const [isLoading, setIsLoading] = useState(false);
     const { userInfo } = useContext(UserContext);
     const id = useParams().id || userInfo.user.id;
+
+    if (useParams().id) {
+        LocalLogin(`/user/${id}`);
+    } else {
+        LocalLogin("/my-posts");
+    }
 
     const history = useHistory();
 
@@ -30,15 +37,6 @@ export default function UserPosts() {
             promise.then((response) => {
                 setIsLoading(false);
                 setData(response.data.posts);
-            });
-
-            promise.catch((error) => {
-                setIsLoading(false);
-                if (!userInfo.token && error.response.status === 400) {
-                    history.push('/');
-                } else {
-                    alert('ERRO, RECARREGUE A PAGINA OU LOGUE NOVAMENTE');
-                }
             });
         },
         [id, userInfo.token, history]

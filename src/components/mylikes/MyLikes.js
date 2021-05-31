@@ -3,12 +3,15 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import UserContext from '../../contexts/UserContext';
 import Main from '../Main';
+import LocalLogin from '../login/LocalLogin';
 
 export default function MyLikes() {
     const { userInfo } = useContext(UserContext);
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const history = useHistory();
+
+    LocalLogin('/my-likes');
 
     const handleGetPosts = useCallback(
         (isFirstTime) => {
@@ -32,15 +35,6 @@ export default function MyLikes() {
                 });
                 setData(response.data.posts);
                 setIsLoading(false);
-            });
-
-            promise.catch((error) => {
-                setIsLoading(false);
-                if (!userInfo.token && error.response.status === 400) {
-                    history.push('/');
-                } else {
-                    alert('ERRO, RECARREGUE A PAGINA OU LOGUE NOVAMENTE');
-                }
             });
         },
         [userInfo.token, history]

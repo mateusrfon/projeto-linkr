@@ -12,7 +12,7 @@ export default function Login(){
     const history = useHistory();
     const [disable, setDisable] = useState(false)
 
-    LocalLogin();
+    LocalLogin("/timeline");
     
     function accountLogin(event){
         event.preventDefault();

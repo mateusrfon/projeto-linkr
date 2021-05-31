@@ -2,7 +2,7 @@ import { useHistory } from 'react-router-dom';
 import { useEffect, useContext } from 'react';
 import UserContext from '../../contexts/UserContext';
 
-export default function LocalLogin() {
+export default function LocalLogin(to) { //"/timeline"
     const history = useHistory();
     const { setUserInfo } = useContext(UserContext);
 
@@ -10,7 +10,9 @@ export default function LocalLogin() {
         const localUserInfo = JSON.parse(localStorage.getItem('userInfo'));
         if ( localUserInfo !== null) {
             setUserInfo(localUserInfo);
-            history.push("/timeline");
+            history.push(to);
+        } else {
+            history.push("/");
         }
     }, []);
 }
