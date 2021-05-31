@@ -17,7 +17,6 @@ export default function Timeline() {
 
     function attData(array) {
         setData(array);
-        handleGetPosts();
     }
 
     const handleGetPosts = useCallback(() => {
