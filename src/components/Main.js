@@ -26,6 +26,7 @@ export default function Main(props) {
                             posts={props.posts}
                             getPosts={props.getPosts}
                             setPosts={props.setPosts}
+                            hasMore={props.hasMore}
                         />
                     )}
                 </div>
