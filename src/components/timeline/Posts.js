@@ -4,13 +4,13 @@ import { FiTrash } from 'react-icons/fi';
 import { TiPencil } from 'react-icons/ti';
 import { useContext, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import ReactHashtag from 'react-hashtag';
 import UserContext from '../../contexts/UserContext';
-import ReactTooltip from 'react-tooltip';
 import DeletePost from './Deletepost';
 import InfiniteScroll from 'react-infinite-scroller';
 import Card from './Card';
 import { like, SwitchEditPost, EndEditPost } from './utils';
+import Tooltip from './Tooltip';
+import HashtagText from './HashtagText';
 
 export default function Posts({
     posts,
@@ -93,32 +93,7 @@ export default function Posts({
                                 />
                             )}
                         </div>
-                        <p
-                            data-tip={
-                                post.likes.length === 1
-                                    ? `${post.likes[0][`user.username`]}`
-                                    : post.likes.length >= 2 && !wasLiked
-                                    ? post.likes[0]['user.username'] +
-                                      ' e ' +
-                                      post.likes[1]['user.username'] +
-                                      ` curtiram e outras ${
-                                          post.likes.length - 2
-                                      } pessoas`
-                                    : post.likes.length >= 2
-                                    ? `Voce e ${
-                                          likesWithoutUserLike[0][
-                                              `user.username`
-                                          ]
-                                      } curtiram e outras ${
-                                          post.likes.length - 2
-                                      } pessoas`
-                                    : ''
-                            }
-                            data-event="mouseover"
-                        >
-                            {post.likes.length}
-                        </p>
-                        <ReactTooltip globalEventOff="mouseout" />
+                        <Tooltip post={post} />
                     </div>
                     <div className="post-infos">
                         <Icons>
@@ -179,26 +154,7 @@ export default function Posts({
                                     }
                                 />
                             ) : (
-                                <ReactHashtag
-                                    renderHashtag={(hashtag) => (
-                                        <Link
-                                            key={Math.random()}
-                                            to={`/hashtag/${
-                                                hashtag[0] === '#'
-                                                    ? hashtag.slice(
-                                                          1,
-                                                          hashtag.length
-                                                      )
-                                                    : hashtag
-                                            }`}
-                                        >
-                                            {' '}
-                                            {hashtag}
-                                        </Link>
-                                    )}
-                                >
-                                    {post.text}
-                                </ReactHashtag>
+                                <HashtagText post={post} />
                             )}
                         </div>
                         <Card post={post} />
