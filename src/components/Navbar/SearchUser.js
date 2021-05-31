@@ -10,7 +10,12 @@ export default function SearchUser(){
     const {userInfo} = useContext(UserContext);
     const [user, setUser] = useState("");
     const [userList,setUserList] = useState([]);
-
+    const [showList, setShowList] = useState(false)
+    
+    if(user.length <3 && showList){
+        setShowList(false)
+    }
+    
     const config = {
         headers: {
             Authorization: `Bearer ${userInfo.token}`,
@@ -29,18 +34,18 @@ export default function SearchUser(){
     });
 
     return(
-        <SearchUserBox> 
+        <SearchUserBox showList={showList}> 
        <LenIcon><BsSearch color="#c6c6c6"/></LenIcon> 
         <DebounceInput
           minLength={3}
           debounceTimeout={300}
           type="text"
-          onChange={event => setUser(event.target.value)} placeholder="Search for people and friends"/>
+          onChange={event => {setUser(event.target.value); setShowList(true)}} placeholder="Search for people and friends"/>
           <ul>
         {
         userList.map(currentUser => {
             return(user.length >2?
-            <Link to={`/user/${currentUser.id}`}><li key={currentUser.id}><img src={currentUser.avatar}/><h1>{currentUser.username}</h1> <p>{currentUser.isFollowingLoggedUser?<span>• following</span>:null}</p></li></Link>
+            <Link to={`/user/${currentUser.id}`}><li key={`k${currentUser.id}`}><img src={currentUser.avatar}/><h1>{currentUser.username}</h1> <p>{currentUser.isFollowingLoggedUser?<span>• following</span>:null}</p></li></Link>
             : null)
         })
         }
@@ -68,7 +73,7 @@ const SearchUserBox = styled.span`
         height: 45px;
         font-size: 19px;
         overflow: scroll;
-        height: 400px;
+        height:${proops => proops.showList?  "60vh":"0vh"};
         
         img{
             width: 39px;
