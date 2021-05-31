@@ -67,6 +67,8 @@ const SearchUserBox = styled.span`
         width: 100%;
         height: 45px;
         font-size: 19px;
+        overflow: scroll;
+        height: 400px;
         
         img{
             width: 39px;
@@ -90,6 +92,14 @@ const SearchUserBox = styled.span`
             display: flex;
             align-items: center;
         }
+    }
+
+    @media(max-width:1000px){
+        width: 90vw;
+        position: fixed;
+        top: 82px;
+        left:5vw;
+        right: 5vw;
     }
 `
 const LenIcon = styled.div`
