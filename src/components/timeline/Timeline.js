@@ -12,12 +12,30 @@ export default function Timeline() {
     const [isLoading] = useState(false);
     const { userInfo } = useContext(UserContext);
     const [hasMore, setHasMore] = useState(true);
+    const [isFollowing, setIsFollowing] = useState(false);
 
     LocalLogin('/timeline');
 
     function attData(array) {
         setData(array);
     }
+
+    const GetFollowings = useCallback(() => {
+        const promise = axios.get(
+            'https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/users/follows',
+            {
+                headers: {
+                    Authorization: `Bearer ${userInfo.token}`,
+                },
+            }
+        );
+
+        promise.then((response) => {
+            if (response.data.users.length === 0) {
+                setIsFollowing(true);
+            }
+        });
+    }, [userInfo.token]);
 
     const handleGetPosts = useCallback(() => {
         const promise = axios.get(
@@ -36,7 +54,8 @@ export default function Timeline() {
 
     useEffect(() => {
         handleGetPosts(true);
-    }, [handleGetPosts]);
+        GetFollowings();
+    }, [handleGetPosts, GetFollowings]);
 
     useInterval(handleGetPosts, 15000);
 
@@ -70,6 +89,7 @@ export default function Timeline() {
             loading={isLoading}
             getPosts={GetMorePosts}
             hasMore={hasMore}
+            isFollowing={isFollowing}
         />
     );
 }

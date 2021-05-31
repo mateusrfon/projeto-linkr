@@ -7,11 +7,18 @@ import { Link } from 'react-router-dom';
 import ReactHashtag from 'react-hashtag';
 import UserContext from '../../contexts/UserContext';
 import ReactTooltip from 'react-tooltip';
-import axios from 'axios';
 import DeletePost from './Deletepost';
 import InfiniteScroll from 'react-infinite-scroller';
+import Card from './Card';
+import { like, SwitchEditPost, EndEditPost } from './utils';
 
-export default function Posts({ posts, getPosts, setPosts, hasMore }) {
+export default function Posts({
+    posts,
+    getPosts,
+    setPosts,
+    hasMore,
+    isFollowing,
+}) {
     const { userInfo } = useContext(UserContext);
     const [modal, setModal] = useState(false);
     const [edit, setEdit] = useState(false);
@@ -24,85 +31,12 @@ export default function Posts({ posts, getPosts, setPosts, hasMore }) {
         },
     };
 
+    if (isFollowing) {
+        return <p>Voce nao segue ninguem ainda, procure por perfis na busca</p>;
+    }
+
     if (posts.length === 0) {
-        return <p>Nenhuma mensagem encontrada</p>;
-    }
-
-    function newTab(link) {
-        window.open(link, '_blank');
-    }
-
-    function like(post, i) {
-        const like = post.likes.filter((like) => {
-            return like.userId === userInfo.user.id;
-        });
-
-        if (like.length === 0) {
-            const promise = axios.post(
-                `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/${post.id}/like`,
-                {},
-                config
-            );
-
-            promise.then((response) => {
-                let newPosts = [...posts];
-                newPosts[i].likes = response.data.post.likes;
-                setPosts(newPosts);
-            });
-        } else {
-            const promise = axios.post(
-                `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/${post.id}/dislike`,
-                {},
-                config
-            );
-            promise.then((response) => {
-                let newPosts = [...posts];
-                newPosts[i].likes = response.data.post.likes;
-                setPosts(newPosts);
-            });
-        }
-    }
-
-    function SwitchEditPost(post, setNewText, setEdit) {
-        if (edit === post.id) {
-            setEdit(false);
-        } else {
-            setEdit(post.id);
-            setNewText(post.text);
-        }
-    }
-
-    function EndEditPost(e, post, body, config, setEdit) {
-        if (e.which === 27) {
-            setEdit(false);
-        } else if (e.which === 13) {
-            e.preventDefault();
-            EditPost(post, body, config);
-        }
-    }
-
-    function EditPost(post, body, config) {
-        setWait(true);
-        const request = axios.put(
-            `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/${post.id}`,
-            body,
-            config
-        );
-        request.then((r) => {
-            setWait(false);
-            setEdit(false);
-            const newPosts = posts.map((e) => {
-                if (e.id === post.id) {
-                    return r.data.post;
-                }
-                return e;
-            });
-            setPosts(newPosts);
-        });
-        request.catch(() => {
-            alert('Não foi possível realizar as alterações');
-            setWait(false);
-        });
+        return <p>Nenhuma publicacao encontrada</p>;
     }
 
     let items = [];
@@ -135,14 +69,26 @@ export default function Posts({ posts, getPosts, setPosts, hasMore }) {
                                 <AiOutlineHeart
                                     color="white"
                                     onClick={() => {
-                                        like(post, i);
+                                        like(
+                                            post,
+                                            i,
+                                            setPosts,
+                                            posts,
+                                            userInfo
+                                        );
                                     }}
                                 />
                             ) : (
                                 <AiFillHeart
                                     color="red"
                                     onClick={() => {
-                                        like(post, i);
+                                        like(
+                                            post,
+                                            i,
+                                            setPosts,
+                                            posts,
+                                            userInfo
+                                        );
                                     }}
                                 />
                             )}
@@ -184,7 +130,8 @@ export default function Posts({ posts, getPosts, setPosts, hasMore }) {
                                             SwitchEditPost(
                                                 post,
                                                 setNewText,
-                                                setEdit
+                                                setEdit,
+                                                edit
                                             )
                                         }
                                     />
@@ -224,7 +171,10 @@ export default function Posts({ posts, getPosts, setPosts, hasMore }) {
                                             post,
                                             { text: newText },
                                             config,
-                                            setEdit
+                                            setEdit,
+                                            setPosts,
+                                            posts,
+                                            setWait
                                         )
                                     }
                                 />
@@ -251,18 +201,7 @@ export default function Posts({ posts, getPosts, setPosts, hasMore }) {
                                 </ReactHashtag>
                             )}
                         </div>
-                        <Button
-                            img={post.linkImage}
-                            onClick={() => {
-                                newTab(post.link);
-                            }}
-                        >
-                            <div className="link-title">{post.linkTitle}</div>
-                            <div className="description">
-                                {post.linkDescription}
-                            </div>
-                            <div className="url">{post.link}</div>
-                        </Button>
+                        <Card post={post} />
                     </div>
                 </li>
             );
@@ -380,46 +319,6 @@ const PostsList = styled.ul`
     a {
         text-decoration: none;
         color: #fff;
-    }
-`;
-
-const Button = styled.button`
-    background-color: #171717;
-    border-radius: 27px;
-    color: white;
-    outline: none;
-    margin-top: 10px;
-    border: 1px solid #4d4d4d;
-    height: auto;
-    min-height: 155px;
-    width: 90%;
-    max-height: 10ch;
-    background-image: ${({ img }) => `url(${img})`};
-    background-repeat: no-repeat;
-    background-size: 40% 100%;
-    background-position: right;
-    cursor: pointer;
-
-    div {
-        width: 55%;
-        text-align: left;
-        margin-left: 15px;
-    }
-    .link-title {
-        font-size: 16px;
-        margin-bottom: 5px;
-    }
-    .description,
-    .url {
-        font-size: 11px;
-    }
-
-    .description {
-        margin-top: 5px;
-    }
-
-    .url {
-        margin-top: 15px;
     }
 `;
 
