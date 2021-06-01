@@ -6,6 +6,8 @@ import { useCallback } from 'react';
 import LocalLogin from '../login/LocalLogin';
 import useInterval from 'react-useinterval';
 let lastPostId;
+let firstPostId;
+let delay = 15000;
 
 export default function Timeline() {
     const [data, setData] = useState([]);
@@ -47,6 +49,7 @@ export default function Timeline() {
             }
         );
         promise.then((response) => {
+            firstPostId = response.data.posts[0].id;
             lastPostId = response.data.posts[response.data.posts.length - 1].id;
             setData(response.data.posts);
         });
@@ -57,7 +60,25 @@ export default function Timeline() {
         GetFollowings();
     }, [handleGetPosts, GetFollowings]);
 
-    useInterval(handleGetPosts, 15000);
+    function getEarlierPosts() {
+        const promise = axios.get(
+            `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/following/posts/?earlierThan=${firstPostId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${userInfo.token}`,
+                },
+            }
+        );
+        promise.then((response) => {
+            if (response.data.posts.length) {
+                let newPosts = [...response.data.posts, ...data];
+                firstPostId = response.data.posts[0].id;
+                setData(newPosts);
+            }
+        });
+    }
+
+    useInterval(getEarlierPosts, delay);
 
     const GetMorePosts = () => {
         const promise = axios.get(
@@ -74,7 +95,6 @@ export default function Timeline() {
                 lastPostId =
                     response.data.posts[response.data.posts.length - 1].id;
                 setData(newPosts);
-                setHasMore(true);
             } else {
                 setHasMore(false);
             }

@@ -6,10 +6,11 @@ import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import LocalLogin from './login/LocalLogin';
 import useInterval from 'react-useinterval';
+let lastPostId;
 
 export default function UserPosts() {
     const [data, setData] = useState([]);
-
+    const [hasMore, setHasMore] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const { userInfo } = useContext(UserContext);
     const id = useParams().id || userInfo.user.id;
@@ -35,6 +36,8 @@ export default function UserPosts() {
             );
             promise.then((response) => {
                 setIsLoading(false);
+                lastPostId =
+                    response.data.posts[response.data.posts.length - 1].id;
                 setData(response.data.posts);
             });
         },
@@ -46,6 +49,27 @@ export default function UserPosts() {
     }, [handleGetPosts]);
 
     useInterval(handleGetPosts, 15000);
+
+    const GetMorePosts = () => {
+        const promise = axios.get(
+            `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/users/${id}/posts/?olderThan=${lastPostId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${userInfo.token}`,
+                },
+            }
+        );
+        promise.then((response) => {
+            if (response.data.posts.length) {
+                let newPosts = [...data, ...response.data.posts];
+                lastPostId =
+                    response.data.posts[response.data.posts.length - 1].id;
+                setData(newPosts);
+            } else {
+                setHasMore(false);
+            }
+        });
+    };
 
     return (
         <Main
@@ -59,8 +83,8 @@ export default function UserPosts() {
                     : 'my posts'
             }
             loading={isLoading}
-            getPosts={handleGetPosts}
-            hasMore={false}
+            getPosts={GetMorePosts}
+            hasMore={hasMore}
         />
     );
 }
