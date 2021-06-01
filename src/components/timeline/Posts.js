@@ -10,6 +10,8 @@ import ReactTooltip from 'react-tooltip';
 import axios from 'axios';
 import DeletePost from './Deletepost';
 import InfiniteScroll from 'react-infinite-scroller';
+import YouTube from 'react-youtube';
+import getYouTubeID from 'get-youtube-id';
 
 export default function Posts({ posts, getPosts, setPosts, hasMore }) {
     const { userInfo } = useContext(UserContext);
@@ -17,6 +19,15 @@ export default function Posts({ posts, getPosts, setPosts, hasMore }) {
     const [edit, setEdit] = useState(false);
     const [newText, setNewText] = useState('');
     const [wait, setWait] = useState(false);
+
+
+
+    const opts = {
+        playerVars: {
+          //https://developers.google.com/youtube/player_parameters
+          autoplay: 0,
+        },
+      };
 
     const config = {
         headers: {
@@ -251,6 +262,8 @@ export default function Posts({ posts, getPosts, setPosts, hasMore }) {
                                 </ReactHashtag>
                             )}
                         </div>
+                        {post.link.includes("www.youtube.com")?
+                        <YTVideo><YouTube className="video" videoId={getYouTubeID(post.link)} opts={opts} id={post.link}  /> <a href ={post.link} target="_blank" > {post.link}</a></YTVideo>:
                         <Button
                             img={post.linkImage}
                             onClick={() => {
@@ -263,6 +276,7 @@ export default function Posts({ posts, getPosts, setPosts, hasMore }) {
                             </div>
                             <div className="url">{post.link}</div>
                         </Button>
+        }
                     </div>
                 </li>
             );
@@ -460,3 +474,19 @@ const EditText = styled.textarea`
         border-radius: none;
     }
 `;
+const YTVideo = styled.div`
+    box-sizing: content-box;
+    width:100%;
+    height: 100%;
+    margin:10px 10px 20px 0;
+    .video{
+        width:480px;
+        height:270px;
+    }
+    @media(max-width:1000px){
+        .video{
+            width: 75vw;
+            height: 30vh;
+        }
+    }
+`
