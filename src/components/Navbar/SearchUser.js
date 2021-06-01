@@ -34,13 +34,13 @@ export default function SearchUser(){
     });
 
     return(
-        <SearchUserBox showList={showList}> 
+        <SearchUserBox  userList={userList.length}> 
        <LenIcon><BsSearch color="#c6c6c6"/></LenIcon> 
         <DebounceInput
           minLength={3}
           debounceTimeout={300}
           type="text"
-          onChange={event => {setUser(event.target.value); setShowList(true)}} placeholder="Search for people and friends"/>
+          onChange={event => {event.target.value.length >2 ? setUser(event.target.value): setUserList([])}} placeholder="Search for people and friends"/>
           <ul>
         {
         userList.map(currentUser => {
@@ -73,7 +73,10 @@ const SearchUserBox = styled.span`
         height: 45px;
         font-size: 19px;
         overflow: scroll;
-        height:${proops => proops.showList?  "60vh":"0vh"};
+        overflow-x: hidden;
+        max-height: 60vh;
+        height:${props => props.userList >= 5? "500%":`${100*props.userList}%` } ;
+        
         
         img{
             width: 39px;

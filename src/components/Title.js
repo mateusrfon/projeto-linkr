@@ -27,7 +27,7 @@ export default function Title(props) {
                 setFollow(data.includes(Number(id)));
             });
         }
-    }, []);
+    }, [id]);
 
     return (
         <TitlePage>
