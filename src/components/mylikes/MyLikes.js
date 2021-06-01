@@ -1,17 +1,16 @@
 import axios from 'axios';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
+import useInterval from 'react-useinterval';
 import UserContext from '../../contexts/UserContext';
-import Main from '../Main';
 import LocalLogin from '../login/LocalLogin';
+import Main from '../Main';
 
 export default function MyLikes() {
     const { userInfo } = useContext(UserContext);
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const history = useHistory();
 
-    LocalLogin('/my-likes');
+    LocalLogin(`/my-likes`);
 
     const handleGetPosts = useCallback(
         (isFirstTime) => {
@@ -28,21 +27,18 @@ export default function MyLikes() {
             );
 
             promise.then((response) => {
-                response.data.posts.forEach((post) => {
-                    post.likes.forEach((like) => {
-                        like.userId = like.id;
-                    });
-                });
                 setData(response.data.posts);
                 setIsLoading(false);
             });
         },
-        [userInfo.token, history]
+        [userInfo.token]
     );
 
     useEffect(() => {
         handleGetPosts(true);
     }, [handleGetPosts]);
+
+    useInterval(handleGetPosts, 15000);
 
     return (
         <Main
@@ -51,6 +47,7 @@ export default function MyLikes() {
             title={`my likes`}
             loading={isLoading}
             getPosts={handleGetPosts}
+            hasMore={false}
         />
     );
 }

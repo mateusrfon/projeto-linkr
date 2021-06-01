@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { AiOutlineHeart, AiFillHeart} from 'react-icons/ai'; 
+import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { FiTrash } from 'react-icons/fi';
 import { TiPencil } from 'react-icons/ti';
 import { useContext, useState, useRef } from 'react';
@@ -9,8 +9,9 @@ import UserContext from '../../contexts/UserContext';
 import ReactTooltip from 'react-tooltip';
 import axios from 'axios';
 import DeletePost from './Deletepost';
+import InfiniteScroll from 'react-infinite-scroller';
 
-export default function Posts({ posts, getPosts, setPosts }) {
+export default function Posts({ posts, getPosts, setPosts, hasMore }) {
     const { userInfo } = useContext(UserContext);
     const [modal, setModal] = useState(false);
     const [edit, setEdit] = useState(false);
@@ -63,35 +64,39 @@ export default function Posts({ posts, getPosts, setPosts }) {
     }
 
     function SwitchEditPost(post, setNewText, setEdit) {
-       if (edit === post.id) {
-           setEdit(false);
-       } else {
-           setEdit(post.id);
-           setNewText(post.text);
-       }
+        if (edit === post.id) {
+            setEdit(false);
+        } else {
+            setEdit(post.id);
+            setNewText(post.text);
+        }
     }
 
     function EndEditPost(e, post, body, config, setEdit) {
         if (e.which === 27) {
-            setEdit(false)
-        } else if (e.which === 13 ) {
+            setEdit(false);
+        } else if (e.which === 13) {
             e.preventDefault();
-            EditPost(post, body, config)
+            EditPost(post, body, config);
         }
     }
 
     function EditPost(post, body, config) {
         setWait(true);
-        const request = axios.put(`https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/${post.id}`, body, config);
-        request.then(r => {
+        const request = axios.put(
+            `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/${post.id}`,
+            body,
+            config
+        );
+        request.then((r) => {
             setWait(false);
             setEdit(false);
-            const newPosts = posts.map(e => {
+            const newPosts = posts.map((e) => {
                 if (e.id === post.id) {
                     return r.data.post;
                 }
                 return e;
-            })
+            });
             setPosts(newPosts);
         });
         request.catch(() => {
@@ -100,128 +105,186 @@ export default function Posts({ posts, getPosts, setPosts }) {
         });
     }
 
+    let items = [];
+
+    function pushItems() {
+        posts.map((post, i) => {
+            const wasLiked = !(
+                post.likes.filter((like) => {
+                    return like.userId === userInfo.user.id;
+                }).length === 0
+            );
+
+            const likesWithoutUserLike = post.likes.filter((like) => {
+                return like['user.username'] !== userInfo.user.username;
+            });
+
+            items.push(
+                <li key={post.id}>
+                    <div className="icons">
+                        <div>
+                            <Link
+                                className="user-icon"
+                                to={`/user/${post.user.id}`}
+                            >
+                                <Avatar avatar={post.user.avatar}></Avatar>
+                            </Link>
+                        </div>
+                        <div className="likes">
+                            {!wasLiked ? (
+                                <AiOutlineHeart
+                                    color="white"
+                                    onClick={() => {
+                                        like(post, i);
+                                    }}
+                                />
+                            ) : (
+                                <AiFillHeart
+                                    color="red"
+                                    onClick={() => {
+                                        like(post, i);
+                                    }}
+                                />
+                            )}
+                        </div>
+                        <p
+                            data-tip={
+                                post.likes.length === 1
+                                    ? `${post.likes[0][`user.username`]}`
+                                    : post.likes.length >= 2 && !wasLiked
+                                    ? post.likes[0]['user.username'] +
+                                      ' e ' +
+                                      post.likes[1]['user.username'] +
+                                      ` curtiram e outras ${
+                                          post.likes.length - 2
+                                      } pessoas`
+                                    : post.likes.length >= 2
+                                    ? `Voce e ${
+                                          likesWithoutUserLike[0][
+                                              `user.username`
+                                          ]
+                                      } curtiram e outras ${
+                                          post.likes.length - 2
+                                      } pessoas`
+                                    : ''
+                            }
+                            data-event="mouseover"
+                        >
+                            {post.likes.length}
+                        </p>
+                        <ReactTooltip globalEventOff="mouseout" />
+                    </div>
+                    <div className="post-infos">
+                        <Icons>
+                            {post.user.id === userInfo.user.id ? (
+                                <span>
+                                    <TiPencil
+                                        color="white"
+                                        onClick={() =>
+                                            SwitchEditPost(
+                                                post,
+                                                setNewText,
+                                                setEdit
+                                            )
+                                        }
+                                    />
+                                </span>
+                            ) : null}
+                            {post.user.id === userInfo.user.id ? (
+                                <FiTrash
+                                    color="white"
+                                    onClick={() => setModal(post.id)}
+                                />
+                            ) : null}
+                        </Icons>
+                        {modal === post.id ? (
+                            <DeletePost
+                                post={post}
+                                userInfo={userInfo}
+                                getPosts={getPosts}
+                                modal={modal}
+                                setModal={setModal}
+                            />
+                        ) : null}
+                        <div className="author-name">
+                            <Link to={`/user/${post.user.id}`}>
+                                {post.user.username}
+                            </Link>
+                        </div>
+                        <div className="text">
+                            {edit === post.id ? (
+                                <EditText
+                                    disabled={wait}
+                                    autoFocus
+                                    value={newText}
+                                    onChange={(e) => setNewText(e.target.value)}
+                                    onKeyDown={(e) =>
+                                        EndEditPost(
+                                            e,
+                                            post,
+                                            { text: newText },
+                                            config,
+                                            setEdit
+                                        )
+                                    }
+                                />
+                            ) : (
+                                <ReactHashtag
+                                    renderHashtag={(hashtag) => (
+                                        <Link
+                                            key={Math.random()}
+                                            to={`/hashtag/${
+                                                hashtag[0] === '#'
+                                                    ? hashtag.slice(
+                                                          1,
+                                                          hashtag.length
+                                                      )
+                                                    : hashtag
+                                            }`}
+                                        >
+                                            {' '}
+                                            {hashtag}
+                                        </Link>
+                                    )}
+                                >
+                                    {post.text}
+                                </ReactHashtag>
+                            )}
+                        </div>
+                        <Button
+                            img={post.linkImage}
+                            onClick={() => {
+                                newTab(post.link);
+                            }}
+                        >
+                            <div className="link-title">{post.linkTitle}</div>
+                            <div className="description">
+                                {post.linkDescription}
+                            </div>
+                            <div className="url">{post.link}</div>
+                        </Button>
+                    </div>
+                </li>
+            );
+        });
+    }
+
+    pushItems();
+
     return (
         <PostsList>
-            {posts.map((post, i) => {
-                const wasLiked = !(
-                    post.likes.filter((like) => {
-                        return like.userId === userInfo.user.id;
-                    }).length === 0
-                );
-
-                const likesWithoutUserLike = post.likes.filter((like) => {
-                    return like['user.username'] !== userInfo.user.username;
-                });
-                return (
-                    <li key={post.id}>
-                        <div className="icons">
-                            <div>
-                                <Link
-                                    className="user-icon"
-                                    to={`/user/${post.user.id}`}
-                                >
-                                    <Avatar avatar={post.user.avatar}></Avatar>
-                                </Link>
-                            </div>
-                            <div className="likes">
-                                {!wasLiked ? (
-                                    <AiOutlineHeart
-                                        color="white"
-                                        onClick={() => {
-                                            like(post, i);
-                                        }}
-                                    />
-                                ) : (
-                                    <AiFillHeart
-                                        color="red"
-                                        onClick={() => {
-                                            like(post, i);
-                                        }}
-                                    />
-                                )}
-                            </div>
-                            <p
-                                data-tip={
-                                    post.likes.length === 1
-                                        ? `${post.likes[0][`user.username`]}`
-                                        : post.likes.length >= 2 && !wasLiked
-                                        ? post.likes[0]['user.username'] +
-                                          ' e ' +
-                                          post.likes[1]['user.username'] +
-                                          ` curtiram e outras ${
-                                              post.likes.length - 2
-                                          } pessoas`
-                                        : post.likes.length >= 2
-                                        ? `Voce e ${
-                                              likesWithoutUserLike[0][
-                                                  `user.username`
-                                              ]
-                                          } curtiram e outras ${
-                                              post.likes.length - 2
-                                          } pessoas`
-                                        : ''
-                                }
-                                data-event="mouseover"
-                            >
-                                {post.likes.length}
-                            </p>
-                            <ReactTooltip globalEventOff="mouseout" />
-                        </div>
-                        <div className="post-infos">
-
-                            <Icons>
-                                {post.user.id === userInfo.user.id?  <span><TiPencil color="white" onClick={() => SwitchEditPost(post, setNewText, setEdit)}/></span> : null }
-                                {post.user.id === userInfo.user.id?  <FiTrash color="white" onClick={()=>setModal(post.id)}/> : null }
-                            </Icons>
-                            {modal === post.id? <DeletePost post={post} userInfo={userInfo} getPosts={getPosts} modal={modal} setModal={setModal}/> :null}
-                            <div className="author-name">
-                                <Link to={`/user/${post.user.id}`}>
-                                    {post.user.username}
-                                </Link>
-                            </div>
-                            <div className="text">
-                                {(edit === post.id) 
-                                ? <EditText disabled={wait} autoFocus value={newText} onChange={(e) => setNewText(e.target.value)} onKeyDown={(e) => EndEditPost(e, post, { text: newText }, config, setEdit)}/>
-                                : <ReactHashtag
-                                renderHashtag={(hashtag) => (
-                                    <Link
-                                        key={Math.random()}
-                                        to={`/hashtag/${
-                                            hashtag[0] === '#'
-                                                ? hashtag.slice(
-                                                      1,
-                                                      hashtag.length
-                                                  )
-                                                : hashtag
-                                        }`}
-                                    >
-                                        {' '}
-                                        {hashtag}
-                                    </Link>
-                                )}
-                            >
-                                {post.text}
-                            </ReactHashtag>
-                            }
-                            </div>
-                            <Button
-                                img={post.linkImage}
-                                onClick={() => {
-                                    newTab(post.link);
-                                }}
-                            >
-                                <div className="link-title">
-                                    {post.linkTitle}
-                                </div>
-                                <div className="description">
-                                    {post.linkDescription}
-                                </div>
-                                <div className="url">{post.link}</div>
-                            </Button>
-                        </div>
-                    </li>
-                );
-            })}
+            <InfiniteScroll
+                pageStart={0}
+                loadMore={getPosts}
+                hasMore={hasMore}
+                loader={
+                    <div className="loader" key={0}>
+                        Loading ...
+                    </div>
+                }
+            >
+                {items}
+            </InfiniteScroll>
         </PostsList>
     );
 }
