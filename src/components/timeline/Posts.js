@@ -131,11 +131,12 @@ export default function Posts({
                         {post.link.includes('www.youtube.com') ? (
                             <YTVideo>
                                 <YouTube
+                                    className="video"
                                     videoId={getYouTubeID(post.link)}
                                     opts={opts}
                                     id={post.link}
                                 />{' '}
-                                {post.link}
+                                <a href={`${post.link}`}>{post.link}</a>
                             </YTVideo>
                         ) : (
                             <Card post={post} />
