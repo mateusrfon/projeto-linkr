@@ -29,9 +29,8 @@ export default function Posts({
     const [wait, setWait] = useState(false);
 
     const opts = {
-        height: '270',
-        width: '480',
         playerVars: {
+            //https://developers.google.com/youtube/player_parameters
             autoplay: 0,
         },
     };
@@ -292,5 +291,18 @@ const EditText = styled.textarea`
     }
 `;
 const YTVideo = styled.div`
-    margin: 15px;
+    box-sizing: content-box;
+    width: 100%;
+    height: 100%;
+    margin: 10px 10px 20px 0;
+    .video {
+        width: 480px;
+        height: 270px;
+    }
+    @media (max-width: 1000px) {
+        .video {
+            width: 75vw;
+            height: 30vh;
+        }
+    }
 `;
