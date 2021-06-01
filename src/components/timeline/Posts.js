@@ -1,33 +1,39 @@
 import styled from 'styled-components';
-import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { FiTrash } from 'react-icons/fi';
 import { TiPencil } from 'react-icons/ti';
-import { useContext, useState, useRef } from 'react';
+import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
-import ReactHashtag from 'react-hashtag';
 import UserContext from '../../contexts/UserContext';
-import ReactTooltip from 'react-tooltip';
-import axios from 'axios';
 import DeletePost from './Deletepost';
 import InfiniteScroll from 'react-infinite-scroller';
+import Card from './Card';
+import { SwitchEditPost, EndEditPost } from './utils';
+import Tooltip from './Tooltip';
+import HashtagText from './HashtagText';
+import Likes from './Likes';
+import User from './User';
 import YouTube from 'react-youtube';
 import getYouTubeID from 'get-youtube-id';
 
-export default function Posts({ posts, getPosts, setPosts, hasMore }) {
+export default function Posts({
+    posts,
+    getPosts,
+    setPosts,
+    hasMore,
+    isFollowing,
+}) {
     const { userInfo } = useContext(UserContext);
     const [modal, setModal] = useState(false);
     const [edit, setEdit] = useState(false);
     const [newText, setNewText] = useState('');
     const [wait, setWait] = useState(false);
 
-
-
     const opts = {
         playerVars: {
-          //https://developers.google.com/youtube/player_parameters
-          autoplay: 0,
+            //https://developers.google.com/youtube/player_parameters
+            autoplay: 0,
         },
-      };
+    };
 
     const config = {
         headers: {
@@ -35,155 +41,30 @@ export default function Posts({ posts, getPosts, setPosts, hasMore }) {
         },
     };
 
+    if (isFollowing) {
+        return <p>Voce nao segue ninguem ainda, procure por perfis na busca</p>;
+    }
+
     if (posts.length === 0) {
-        return <p>Nenhuma mensagem encontrada</p>;
-    }
-
-    function newTab(link) {
-        window.open(link, '_blank');
-    }
-
-    function like(post, i) {
-        const like = post.likes.filter((like) => {
-            return like.userId === userInfo.user.id;
-        });
-
-        if (like.length === 0) {
-            const promise = axios.post(
-                `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/${post.id}/like`,
-                {},
-                config
-            );
-
-            promise.then((response) => {
-                let newPosts = [...posts];
-                newPosts[i].likes = response.data.post.likes;
-                setPosts(newPosts);
-            });
-        } else {
-            const promise = axios.post(
-                `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/${post.id}/dislike`,
-                {},
-                config
-            );
-            promise.then((response) => {
-                let newPosts = [...posts];
-                newPosts[i].likes = response.data.post.likes;
-                setPosts(newPosts);
-            });
-        }
-    }
-
-    function SwitchEditPost(post, setNewText, setEdit) {
-        if (edit === post.id) {
-            setEdit(false);
-        } else {
-            setEdit(post.id);
-            setNewText(post.text);
-        }
-    }
-
-    function EndEditPost(e, post, body, config, setEdit) {
-        if (e.which === 27) {
-            setEdit(false);
-        } else if (e.which === 13) {
-            e.preventDefault();
-            EditPost(post, body, config);
-        }
-    }
-
-    function EditPost(post, body, config) {
-        setWait(true);
-        const request = axios.put(
-            `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/${post.id}`,
-            body,
-            config
-        );
-        request.then((r) => {
-            setWait(false);
-            setEdit(false);
-            const newPosts = posts.map((e) => {
-                if (e.id === post.id) {
-                    return r.data.post;
-                }
-                return e;
-            });
-            setPosts(newPosts);
-        });
-        request.catch(() => {
-            alert('Não foi possível realizar as alterações');
-            setWait(false);
-        });
+        return <p>Nenhuma publicacao encontrada</p>;
     }
 
     let items = [];
 
     function pushItems() {
         posts.map((post, i) => {
-            const wasLiked = !(
-                post.likes.filter((like) => {
-                    return like.userId === userInfo.user.id;
-                }).length === 0
-            );
-
-            const likesWithoutUserLike = post.likes.filter((like) => {
-                return like['user.username'] !== userInfo.user.username;
-            });
-
             items.push(
                 <li key={post.id}>
                     <div className="icons">
-                        <div>
-                            <Link
-                                className="user-icon"
-                                to={`/user/${post.user.id}`}
-                            >
-                                <Avatar avatar={post.user.avatar}></Avatar>
-                            </Link>
-                        </div>
-                        <div className="likes">
-                            {!wasLiked ? (
-                                <AiOutlineHeart
-                                    color="white"
-                                    onClick={() => {
-                                        like(post, i);
-                                    }}
-                                />
-                            ) : (
-                                <AiFillHeart
-                                    color="red"
-                                    onClick={() => {
-                                        like(post, i);
-                                    }}
-                                />
-                            )}
-                        </div>
-                        <p
-                            data-tip={
-                                post.likes.length === 1
-                                    ? `${post.likes[0][`user.username`]}`
-                                    : post.likes.length >= 2 && !wasLiked
-                                    ? post.likes[0]['user.username'] +
-                                      ' e ' +
-                                      post.likes[1]['user.username'] +
-                                      ` curtiram e outras ${
-                                          post.likes.length - 2
-                                      } pessoas`
-                                    : post.likes.length >= 2
-                                    ? `Voce e ${
-                                          likesWithoutUserLike[0][
-                                              `user.username`
-                                          ]
-                                      } curtiram e outras ${
-                                          post.likes.length - 2
-                                      } pessoas`
-                                    : ''
-                            }
-                            data-event="mouseover"
-                        >
-                            {post.likes.length}
-                        </p>
-                        <ReactTooltip globalEventOff="mouseout" />
+                        <User post={post} />
+                        <Likes
+                            post={post}
+                            i={i}
+                            setPosts={setPosts}
+                            posts={posts}
+                            userInfo={userInfo}
+                        />
+                        <Tooltip post={post} />
                     </div>
                     <div className="post-infos">
                         <Icons>
@@ -195,7 +76,8 @@ export default function Posts({ posts, getPosts, setPosts, hasMore }) {
                                             SwitchEditPost(
                                                 post,
                                                 setNewText,
-                                                setEdit
+                                                setEdit,
+                                                edit
                                             )
                                         }
                                     />
@@ -235,48 +117,33 @@ export default function Posts({ posts, getPosts, setPosts, hasMore }) {
                                             post,
                                             { text: newText },
                                             config,
-                                            setEdit
+                                            setEdit,
+                                            setPosts,
+                                            posts,
+                                            setWait
                                         )
                                     }
                                 />
                             ) : (
-                                <ReactHashtag
-                                    renderHashtag={(hashtag) => (
-                                        <Link
-                                            key={Math.random()}
-                                            to={`/hashtag/${
-                                                hashtag[0] === '#'
-                                                    ? hashtag.slice(
-                                                          1,
-                                                          hashtag.length
-                                                      )
-                                                    : hashtag
-                                            }`}
-                                        >
-                                            {' '}
-                                            {hashtag}
-                                        </Link>
-                                    )}
-                                >
-                                    {post.text}
-                                </ReactHashtag>
+                                <HashtagText post={post} />
                             )}
                         </div>
-                        {post.link.includes("www.youtube.com")?
-                        <YTVideo><YouTube className="video" videoId={getYouTubeID(post.link)} opts={opts} id={post.link}  /> <a href ={post.link} target="_blank" > {post.link}</a></YTVideo>:
-                        <Button
-                            img={post.linkImage}
-                            onClick={() => {
-                                newTab(post.link);
-                            }}
-                        >
-                            <div className="link-title">{post.linkTitle}</div>
-                            <div className="description">
-                                {post.linkDescription}
-                            </div>
-                            <div className="url">{post.link}</div>
-                        </Button>
-        }
+                        {post.link.includes('www.youtube.com') ? (
+                            <YTVideo>
+                                <YouTube
+                                    className="video"
+                                    videoId={getYouTubeID(post.link)}
+                                    opts={opts}
+                                    id={post.link}
+                                />{' '}
+                                <a href={post.link} target="_blank">
+                                    {' '}
+                                    {post.link}
+                                </a>
+                            </YTVideo>
+                        ) : (
+                            <Card post={post} />
+                        )}
                     </div>
                 </li>
             );
@@ -384,10 +251,13 @@ const PostsList = styled.ul`
     @media (max-width: 1000px) {
         li {
             width: 100%;
+            border-radius: 0px;
+            padding: 0px 10px;
         }
 
         button {
-            width: auto;
+            width: 100%;
+            min-height: 180px;
         }
     }
 
@@ -395,56 +265,6 @@ const PostsList = styled.ul`
         text-decoration: none;
         color: #fff;
     }
-`;
-
-const Button = styled.button`
-    background-color: #171717;
-    border-radius: 27px;
-    color: white;
-    outline: none;
-    margin-top: 10px;
-    border: 1px solid #4d4d4d;
-    height: auto;
-    min-height: 155px;
-    width: 90%;
-    max-height: 10ch;
-    background-image: ${({ img }) => `url(${img})`};
-    background-repeat: no-repeat;
-    background-size: 40% 100%;
-    background-position: right;
-    cursor: pointer;
-
-    div {
-        width: 55%;
-        text-align: left;
-        margin-left: 15px;
-    }
-    .link-title {
-        font-size: 16px;
-        margin-bottom: 5px;
-    }
-    .description,
-    .url {
-        font-size: 11px;
-    }
-
-    .description {
-        margin-top: 5px;
-    }
-
-    .url {
-        margin-top: 15px;
-    }
-`;
-
-const Avatar = styled.div`
-    width: 50px;
-    height: 50px;
-    border-radius: 27px;
-    margin: 20px 0;
-    background-image: ${({ avatar }) => `url(${avatar})`};
-    background-repeat: no-repeat;
-    background-size: cover;
 `;
 
 const Icons = styled.span`
@@ -476,17 +296,17 @@ const EditText = styled.textarea`
 `;
 const YTVideo = styled.div`
     box-sizing: content-box;
-    width:100%;
+    width: 100%;
     height: 100%;
-    margin:10px 10px 20px 0;
-    .video{
-        width:480px;
-        height:270px;
+    margin: 10px 10px 20px 0;
+    .video {
+        width: 480px;
+        height: 270px;
     }
-    @media(max-width:1000px){
-        .video{
+    @media (max-width: 1000px) {
+        .video {
             width: 75vw;
             height: 30vh;
         }
     }
-`
+`;

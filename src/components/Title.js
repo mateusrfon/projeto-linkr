@@ -8,22 +8,25 @@ import Follow from './Follow';
 export default function Title(props) {
     const id = useParams().id;
     const { title, posts } = props;
-    const { avatar } = (posts[0] ? posts[0].user : { id: '', avatar: '' });
+    const { avatar } = posts[0] ? posts[0].user : { id: '', avatar: '' };
     const { userInfo } = useContext(UserContext);
     const [follow, setFollow] = useState(false);
     const [wait, setWait] = useState(false);
 
     const config = {
         headers: {
-            Authorization: `Bearer ${userInfo.token}`
-        }
-    }
-    
+            Authorization: `Bearer ${userInfo.token}`,
+        },
+    };
+
     useEffect(() => {
         if (id !== undefined) {
-            const request = axios.get('https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/users/follows', config)
-            request.then(r => {
-                const data = r.data.users.map(e => e.id);
+            const request = axios.get(
+                'https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/users/follows',
+                config
+            );
+            request.then((r) => {
+                const data = r.data.users.map((e) => e.id);
                 setFollow(data.includes(Number(id)));
             });
         }
@@ -32,31 +35,32 @@ export default function Title(props) {
     return (
         <TitlePage>
             <User>
-                {
-                (id === undefined || title === 'carregando')
-                ? null 
-                : <img src={avatar} alt='user'/>
-                }
+                {id === undefined || title === 'carregando' ? null : (
+                    <img src={avatar} alt="user" />
+                )}
                 <h1>{title}</h1>
             </User>
-            {
-            (id === undefined || title === 'carregando' || userInfo.user.id === Number(id))
-            ? null 
-            : follow 
-                ? <UnfollowBtn 
-                    disabled={wait} 
-                    onClick={() => Follow(id, false, setWait, setFollow, userInfo.token)}
-                  >
-                      Unfollow
-                  </UnfollowBtn> 
-
-                : <FollowBtn 
-                    disabled={wait} 
-                    onClick={() => Follow(id, true, setWait, setFollow, userInfo.token)}
-                  >
-                      Follow
-                  </FollowBtn>
-            }
+            {id === undefined ||
+            title === 'carregando' ||
+            userInfo.user.id === Number(id) ? null : follow ? (
+                <UnfollowBtn
+                    disabled={wait}
+                    onClick={() =>
+                        Follow(id, false, setWait, setFollow, userInfo.token)
+                    }
+                >
+                    Unfollow
+                </UnfollowBtn>
+            ) : (
+                <FollowBtn
+                    disabled={wait}
+                    onClick={() =>
+                        Follow(id, true, setWait, setFollow, userInfo.token)
+                    }
+                >
+                    Follow
+                </FollowBtn>
+            )}
         </TitlePage>
     );
 }
@@ -67,7 +71,7 @@ const TitlePage = styled.div`
     width: 80%;
     display: flex;
     justify-content: space-between;
-    align-items: center;  
+    align-items: center;
     button {
         width: 112px;
         height: 31px;
@@ -76,7 +80,7 @@ const TitlePage = styled.div`
         font-family: 'Lato';
         font-weight: 700;
         cursor: pointer;
-    }  
+    }
 `;
 
 const User = styled.div`
@@ -95,11 +99,11 @@ const User = styled.div`
 `;
 
 const FollowBtn = styled.button`
-    background-color: #1877F2;
+    background-color: #1877f2;
     color: #fff;
 `;
 
 const UnfollowBtn = styled.button`
     background-color: #fff;
-    color: #1877F2;
+    color: #1877f2;
 `;
