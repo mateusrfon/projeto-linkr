@@ -21,6 +21,7 @@
     "react-spring": "^9.2.0",
     "react-tooltip": "^4.2.19",
     "react-useinterval": "^1.0.2",
+    "react-youtube": "^7.13.1",
     "save": "^2.4.0",
     "styled-components": "^5.3.0",
     "web-vitals": "^1.1.2"

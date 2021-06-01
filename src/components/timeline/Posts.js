@@ -10,6 +10,8 @@ import ReactTooltip from 'react-tooltip';
 import axios from 'axios';
 import DeletePost from './Deletepost';
 import InfiniteScroll from 'react-infinite-scroller';
+import YouTube from 'react-youtube';
+import getYouTubeID from 'get-youtube-id';
 
 export default function Posts({ posts, getPosts, setPosts, hasMore }) {
     const { userInfo } = useContext(UserContext);
@@ -260,6 +262,8 @@ export default function Posts({ posts, getPosts, setPosts, hasMore }) {
                                 </ReactHashtag>
                             )}
                         </div>
+                        {post.link.includes("www.youtube.com")?
+                        <YTVideo><YouTube className="video" videoId={getYouTubeID(post.link)} opts={opts} id={post.link}  /> {post.link}</YTVideo>:
                         <Button
                             img={post.linkImage}
                             onClick={() => {
@@ -272,6 +276,7 @@ export default function Posts({ posts, getPosts, setPosts, hasMore }) {
                             </div>
                             <div className="url">{post.link}</div>
                         </Button>
+        }
                     </div>
                 </li>
             );
