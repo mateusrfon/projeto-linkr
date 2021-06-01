@@ -6,6 +6,7 @@ import { AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
 import UserContext from '../../contexts/UserContext';
 
 import './icons.css';
+import SearchUser from './SearchUser';
 
 export default function Navbar() {
     const [menu, setMenu] = useState(false);
@@ -29,6 +30,7 @@ export default function Navbar() {
     return (
         <StyledNavbar>
             <Linkr><Link to='/timeline'>linkr</Link></Linkr>
+            <SearchUser/>
             <MenuButton onClick={() => setMenu(!menu)}>
                 <IconContext.Provider value={{ className: "arrow" }}>
                     {menu ? <AiOutlineUp /> : <AiOutlineDown />}
