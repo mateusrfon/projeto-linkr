@@ -8,9 +8,9 @@ import { VscLoading } from 'react-icons/vsc';
 export default function Main(props) {
     return (
         <Page>
+            <Title title={props.title} posts={props.posts} />
             <div>
                 <div className="container">
-                    <Title title={props.title} />
                     {props.title === 'timeline' ? (
                         <Publish reloadTimeline={props.getPosts} />
                     ) : (
@@ -26,6 +26,7 @@ export default function Main(props) {
                             posts={props.posts}
                             getPosts={props.getPosts}
                             setPosts={props.setPosts}
+                            hasMore={props.hasMore}
                         />
                     )}
                 </div>
@@ -41,10 +42,11 @@ const Page = styled.main`
     min-height: 100vh;
     margin-top: 72px;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 
     .container {
-        width: 80%;
+        width: 611px;
     }
 
     > div {

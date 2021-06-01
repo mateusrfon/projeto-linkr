@@ -3,8 +3,9 @@ import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import UserContext from '../contexts/UserContext';
 import { useCallback } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import LocalLogin from './login/LocalLogin';
+import useInterval from 'react-useinterval';
 
 export default function UserPosts() {
     const [data, setData] = useState([]);
@@ -16,10 +17,8 @@ export default function UserPosts() {
     if (useParams().id) {
         LocalLogin(`/user/${id}`);
     } else {
-        LocalLogin("/my-posts");
+        LocalLogin('/my-posts');
     }
-
-    const history = useHistory();
 
     const handleGetPosts = useCallback(
         (isFirstTime) => {
@@ -39,12 +38,14 @@ export default function UserPosts() {
                 setData(response.data.posts);
             });
         },
-        [id, userInfo.token, history]
+        [id, userInfo.token]
     );
 
     useEffect(() => {
         handleGetPosts(true);
     }, [handleGetPosts]);
+
+    useInterval(handleGetPosts, 15000);
 
     return (
         <Main
@@ -59,6 +60,7 @@ export default function UserPosts() {
             }
             loading={isLoading}
             getPosts={handleGetPosts}
+            hasMore={false}
         />
     );
 }
