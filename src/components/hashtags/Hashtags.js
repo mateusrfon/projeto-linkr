@@ -1,16 +1,16 @@
 import axios from 'axios';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import UserContext from '../../contexts/UserContext';
 import Main from '../Main';
 import LocalLogin from '../login/LocalLogin';
+import useInterval from 'react-useinterval';
 
 export default function Hashtags() {
     let { hashtag } = useParams();
     const { userInfo } = useContext(UserContext);
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const history = useHistory();
 
     LocalLogin(`/hashtag/${hashtag}`);
 
@@ -33,12 +33,14 @@ export default function Hashtags() {
                 setIsLoading(false);
             });
         },
-        [userInfo.token, hashtag, history]
+        [userInfo.token, hashtag]
     );
 
     useEffect(() => {
         handleGetPosts(true);
     }, [handleGetPosts]);
+
+    useInterval(handleGetPosts, 15000);
 
     return (
         <Main
@@ -47,6 +49,7 @@ export default function Hashtags() {
             title={`# ${hashtag}`}
             loading={isLoading}
             getPosts={handleGetPosts}
+            hasMore={false}
         />
     );
 }

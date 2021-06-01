@@ -31,6 +31,11 @@ export default function Signup() {
             if (error.response.status === 403) {
                 alert('E-mail já cadastrado');
                 setDisable(false);
+            } else{
+                if(error.response.status === 400){
+                    alert('Insira uma url de imagem válida')
+                    setDisable(false)
+                }
             }
         });
     }
@@ -43,24 +48,28 @@ export default function Signup() {
             <Inputs disable={disable}>
                 <form onSubmit={createAccount}>
                     <input
+                        disabled={disable}
                         required
                         placeholder="e-mail"
                         type="email"
                         onChange={(e) => setEmail(e.target.value)}
                     />
                     <input
+                        disabled={disable}
                         required
                         placeholder="password"
                         type="password"
                         onChange={(e) => setPassword(e.target.value)}
                     />
                     <input
+                        disabled={disable}
                         required
                         placeholder="username"
                         type="text"
                         onChange={(e) => setUsername(e.target.value)}
                     />
                     <input
+                        disabled={disable}
                         required
                         placeholder="picture url"
                         type="url"
