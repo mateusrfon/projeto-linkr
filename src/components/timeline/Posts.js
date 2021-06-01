@@ -14,7 +14,8 @@ import Likes from './Likes';
 import User from './User';
 import YouTube from 'react-youtube';
 import getYouTubeID from 'get-youtube-id';
-
+//colocar geolocalizador
+//ao clicar no geolocalizador abrir mapa conforme layout
 export default function Posts({
     posts,
     getPosts,
