@@ -2,7 +2,7 @@ import Iframe from 'react-iframe';
 import styled from 'styled-components';
 import { AiOutlineClose } from 'react-icons/ai';
 
-export default function LinkPage({ link, iframe, setIframe }) {
+export default function LinkPage({ link, setIframe }) {
     window.onkeydown = e => {
         if (e.which === 27) {
             setIframe(false);
