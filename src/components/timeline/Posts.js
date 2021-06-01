@@ -25,7 +25,6 @@ export default function Posts({ posts, getPosts, setPosts }) {
 
 
     const opts = {
-        
         playerVars: {
           //https://developers.google.com/youtube/player_parameters
           autoplay: 0,
