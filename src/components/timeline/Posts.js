@@ -10,10 +10,10 @@ import Card from './Card';
 import { SwitchEditPost, EndEditPost } from './utils';
 import Tooltip from './Tooltip';
 import HashtagText from './HashtagText';
-import YouTube from 'react-youtube';
 import Likes from './Likes';
 import User from './User';
-const getYouTubeID = require('get-youtube-id');
+import YouTube from 'react-youtube';
+import getYouTubeID from 'get-youtube-id';
 
 export default function Posts({
     posts,
@@ -136,7 +136,10 @@ export default function Posts({
                                     opts={opts}
                                     id={post.link}
                                 />{' '}
-                                <a href={`${post.link}`}>{post.link}</a>
+                                <a href={post.link} target="_blank">
+                                    {' '}
+                                    {post.link}
+                                </a>
                             </YTVideo>
                         ) : (
                             <Card post={post} />
