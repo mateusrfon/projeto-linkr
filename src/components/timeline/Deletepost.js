@@ -10,7 +10,7 @@ export default function DeletePost({post,userInfo,getPosts,setModal}){
    
         return(
             <>
-            <Confirm>
+            <Confirm onClick={() => setModal(false)}>
                 <div>
                 <h1>{disabled ? "Deletando post":"Tem certeza que deseja excluir essa publicação?"}</h1>
                 <span>

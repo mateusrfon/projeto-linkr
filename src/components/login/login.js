@@ -43,8 +43,8 @@ export default function Login(){
             </Front>
             <Inputs disable={disable}>
             <form onSubmit={accountLogin}>
-                <input required placeholder="e-mail" type="email" onChange={(e)=> setEmail(e.target.value)} />
-                <input required placeholder="password" type="password" onChange={(e)=> setPassword(e.target.value)} />
+                <input disabled={disable} required placeholder="e-mail" type="email" onChange={(e)=> setEmail(e.target.value)} />
+                <input disabled={disable} required placeholder="password" type="password" onChange={(e)=> setPassword(e.target.value)} />
                 <button disabled={disable} type="submit">Log in</button>
                 <Link to="/sign-up"><p>First time? Create an account!</p></Link>
             </form>
