@@ -263,7 +263,7 @@ export default function Posts({ posts, getPosts, setPosts, hasMore }) {
                             )}
                         </div>
                         {post.link.includes("www.youtube.com")?
-                        <YTVideo><YouTube className="video" videoId={getYouTubeID(post.link)} opts={opts} id={post.link}  /> {post.link}</YTVideo>:
+                        <YTVideo><YouTube className="video" videoId={getYouTubeID(post.link)} opts={opts} id={post.link}  /> <a href ={post.link} target="_blank" > {post.link}</a></YTVideo>:
                         <Button
                             img={post.linkImage}
                             onClick={() => {
