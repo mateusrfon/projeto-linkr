@@ -28,7 +28,7 @@ export default function Title(props) {
             });
         }
     }, []);
-
+    console.log(userInfo.user.id, id)
     return (
         <TitlePage>
             <User>
@@ -40,7 +40,7 @@ export default function Title(props) {
                 <h1>{title}</h1>
             </User>
             {
-            (id === undefined || title === 'carregando')
+            (id === undefined || title === 'carregando' || userInfo.user.id === Number(id))
             ? null 
             : follow 
                 ? <UnfollowBtn 
