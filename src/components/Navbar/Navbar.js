@@ -62,7 +62,7 @@ const StyledNavbar = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    z-index: 9999;
+    z-index: 900;
     @media (max-width: 1000px) {
         padding: 0 14px 0 17px;
     }
