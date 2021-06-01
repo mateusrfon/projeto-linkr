@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { FiTrash } from 'react-icons/fi';
 import { TiPencil } from 'react-icons/ti';
-import { useContext, useState, useRef } from 'react';
+import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import UserContext from '../../contexts/UserContext';
 import DeletePost from './Deletepost';
