@@ -28,7 +28,7 @@ export default function Title(props) {
             });
         }
     }, []);
-    console.log(userInfo.user.id, id)
+    
     return (
         <TitlePage>
             <User>
