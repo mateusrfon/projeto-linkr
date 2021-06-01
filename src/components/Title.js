@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import UserContext from '../contexts/UserContext';
 import Follow from './Follow';
 
@@ -10,7 +10,7 @@ export default function Title(props) {
     const { title, posts } = props;
     const { avatar } = (posts[0] ? posts[0].user : { id: '', avatar: '' });
     const { userInfo } = useContext(UserContext);
-    const [follow, setFollow] = useState('');
+    const [follow, setFollow] = useState(false);
     const [wait, setWait] = useState(false);
 
     const config = {
@@ -19,13 +19,15 @@ export default function Title(props) {
         }
     }
     
-    if (id !== undefined) {
-        const request = axios.get('https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/users/follows', config)
-        request.then(r => {
-            setFollow(r.data.users.includes({ id }));
-            //console.log(r.data.users);
-        });
-    }
+    useEffect(() => {
+        if (id !== undefined) {
+            const request = axios.get('https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/users/follows', config)
+            request.then(r => {
+                const data = r.data.users.map(e => e.id);
+                setFollow(data.includes(Number(id)));
+            });
+        }
+    }, []);
 
     return (
         <TitlePage>
@@ -43,14 +45,14 @@ export default function Title(props) {
             : follow 
                 ? <UnfollowBtn 
                     disabled={wait} 
-                    onClick={() => Follow(id, true, setWait, setFollow, userInfo.token)}
+                    onClick={() => Follow(id, false, setWait, setFollow, userInfo.token)}
                   >
                       Unfollow
                   </UnfollowBtn> 
 
                 : <FollowBtn 
                     disabled={wait} 
-                    onClick={() => Follow(id, false, setWait, setFollow, userInfo.token)}
+                    onClick={() => Follow(id, true, setWait, setFollow, userInfo.token)}
                   >
                       Follow
                   </FollowBtn>
