@@ -25,10 +25,9 @@ export default function Posts({ posts, getPosts, setPosts }) {
 
 
     const opts = {
-        height: '270',
-        width: '480',
+        
         playerVars: {
-          // https://developers.google.com/youtube/player_parameters
+          //https://developers.google.com/youtube/player_parameters
           autoplay: 0,
         },
       };
@@ -221,7 +220,7 @@ export default function Posts({ posts, getPosts, setPosts }) {
                             }
                             </div>
                             {post.link.includes("www.youtube.com")?
-                            <YTVideo><YouTube videoId={getYouTubeID(post.link)} opts={opts} id={post.link}  /> {post.link}</YTVideo>:
+                            <YTVideo><YouTube className="video" videoId={getYouTubeID(post.link)} opts={opts} id={post.link}  /> <a href={`${post.link}`}>{post.link}</a></YTVideo>:
                             <Button
                                 img={post.linkImage}
                                 onClick={() => {
@@ -417,5 +416,18 @@ const EditText = styled.textarea`
     }
 `;
 const YTVideo = styled.div`
-    margin:15px;
+    box-sizing: content-box;
+    width:100%;
+    height: 100%;
+    margin:10px 10px 20px 0;
+    .video{
+        width:480px;
+        height:270px;
+    }
+    @media(max-width:1000px){
+        .video{
+            width: 75vw;
+            height: 30vh;
+        }
+    }
 `
