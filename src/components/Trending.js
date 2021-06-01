@@ -53,7 +53,6 @@ export default function Trending() {
 const Container = styled.div`
     margin-left: 25px;
     width: 100%;
-    margin-top: 47px;
 
     aside {
         @media (max-width: 1275px) {
@@ -68,7 +67,6 @@ const Aside = styled.aside`
     height: 420px;
     background: #171717;
     border-radius: 16px;
-    margin-top: 110px;
 
     .links {
         height: 345px;
