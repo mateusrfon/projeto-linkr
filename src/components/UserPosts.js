@@ -78,7 +78,7 @@ export default function UserPosts() {
             title={
                 useParams().id
                     ? data[0]
-                        ? data[0].user.username
+                        ? data[0].user.username + '`s posts'
                         : 'carregando'
                     : 'my posts'
             }
