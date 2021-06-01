@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { FiTrash } from 'react-icons/fi';
 import { TiPencil } from 'react-icons/ti';
 import { useContext, useState, useRef } from 'react';
@@ -8,12 +7,13 @@ import UserContext from '../../contexts/UserContext';
 import DeletePost from './Deletepost';
 import InfiniteScroll from 'react-infinite-scroller';
 import Card from './Card';
-import { like, SwitchEditPost, EndEditPost } from './utils';
+import { SwitchEditPost, EndEditPost } from './utils';
 import Tooltip from './Tooltip';
 import HashtagText from './HashtagText';
-import YouTube from 'react-youtube'
-const getYouTubeID = require("get-youtube-id");
-
+import YouTube from 'react-youtube';
+import Likes from './Likes';
+import User from './User';
+const getYouTubeID = require('get-youtube-id');
 
 export default function Posts({
     posts,
@@ -32,9 +32,9 @@ export default function Posts({
         height: '270',
         width: '480',
         playerVars: {
-          autoplay: 0,
+            autoplay: 0,
         },
-      };
+    };
 
     const config = {
         headers: {
@@ -54,24 +54,17 @@ export default function Posts({
 
     function pushItems() {
         posts.map((post, i) => {
-            const wasLiked = !(
-                post.likes.filter((like) => {
-                    return like.userId === userInfo.user.id;
-                }).length === 0
-            );
-
             items.push(
                 <li key={post.id}>
                     <div className="icons">
-                        <div>
-                            <Link
-                                className="user-icon"
-                                to={`/user/${post.user.id}`}
-                            >
-                                <Avatar avatar={post.user.avatar}></Avatar>
-                            </Link>
-                        </div>
-                        <Likes post={post} i={i} setPosts={setPosts} posts={posts} userInfo={userInfo}/>
+                        <User post={post} />
+                        <Likes
+                            post={post}
+                            i={i}
+                            setPosts={setPosts}
+                            posts={posts}
+                            userInfo={userInfo}
+                        />
                         <Tooltip post={post} />
                     </div>
                     <div className="post-infos">
@@ -136,8 +129,18 @@ export default function Posts({
                                 <HashtagText post={post} />
                             )}
                         </div>
-                        {post.link.includes("www.youtube.com") ?
-                            <YTVideo><YouTube videoId={getYouTubeID(post.link)} opts={opts} id={post.link}  /> {post.link}</YTVideo> : <Card post={post} />}
+                        {post.link.includes('www.youtube.com') ? (
+                            <YTVideo>
+                                <YouTube
+                                    videoId={getYouTubeID(post.link)}
+                                    opts={opts}
+                                    id={post.link}
+                                />{' '}
+                                {post.link}
+                            </YTVideo>
+                        ) : (
+                            <Card post={post} />
+                        )}
                     </div>
                 </li>
             );
@@ -245,10 +248,13 @@ const PostsList = styled.ul`
     @media (max-width: 1000px) {
         li {
             width: 100%;
+            border-radius: 0px;
+            padding: 0px 10px;
         }
 
         button {
-            width: auto;
+            width: 100%;
+            min-height: 180px;
         }
     }
 
@@ -256,16 +262,6 @@ const PostsList = styled.ul`
         text-decoration: none;
         color: #fff;
     }
-`;
-
-const Avatar = styled.div`
-    width: 50px;
-    height: 50px;
-    border-radius: 27px;
-    margin: 20px 0;
-    background-image: ${({ avatar }) => `url(${avatar})`};
-    background-repeat: no-repeat;
-    background-size: cover;
 `;
 
 const Icons = styled.span`
@@ -296,5 +292,5 @@ const EditText = styled.textarea`
     }
 `;
 const YTVideo = styled.div`
-    margin:15px;
-`
+    margin: 15px;
+`;
