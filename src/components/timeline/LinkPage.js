@@ -4,12 +4,8 @@ import { AiOutlineClose } from 'react-icons/ai';
 
 export default function LinkPage({ link, iframe, setIframe }) {
     window.onkeydown = e => {
-        if (iframe === true) {
-            console.log(e.key);
-            console.log(iframe);
-            if (e.which === 27) {
-                setIframe(false);
-            }
+        if (e.which === 27) {
+            setIframe(false);
         }
     }
     return (
