@@ -11,6 +11,9 @@ import Card from './Card';
 import { like, SwitchEditPost, EndEditPost } from './utils';
 import Tooltip from './Tooltip';
 import HashtagText from './HashtagText';
+import YouTube from 'react-youtube'
+const getYouTubeID = require("get-youtube-id");
+
 
 export default function Posts({
     posts,
@@ -24,6 +27,14 @@ export default function Posts({
     const [edit, setEdit] = useState(false);
     const [newText, setNewText] = useState('');
     const [wait, setWait] = useState(false);
+
+    const opts = {
+        height: '270',
+        width: '480',
+        playerVars: {
+          autoplay: 0,
+        },
+      };
 
     const config = {
         headers: {
@@ -49,10 +60,6 @@ export default function Posts({
                 }).length === 0
             );
 
-            const likesWithoutUserLike = post.likes.filter((like) => {
-                return like['user.username'] !== userInfo.user.username;
-            });
-
             items.push(
                 <li key={post.id}>
                     <div className="icons">
@@ -64,35 +71,7 @@ export default function Posts({
                                 <Avatar avatar={post.user.avatar}></Avatar>
                             </Link>
                         </div>
-                        <div className="likes">
-                            {!wasLiked ? (
-                                <AiOutlineHeart
-                                    color="white"
-                                    onClick={() => {
-                                        like(
-                                            post,
-                                            i,
-                                            setPosts,
-                                            posts,
-                                            userInfo
-                                        );
-                                    }}
-                                />
-                            ) : (
-                                <AiFillHeart
-                                    color="red"
-                                    onClick={() => {
-                                        like(
-                                            post,
-                                            i,
-                                            setPosts,
-                                            posts,
-                                            userInfo
-                                        );
-                                    }}
-                                />
-                            )}
-                        </div>
+                        <Likes post={post} i={i} setPosts={setPosts} posts={posts} userInfo={userInfo}/>
                         <Tooltip post={post} />
                     </div>
                     <div className="post-infos">
@@ -157,7 +136,8 @@ export default function Posts({
                                 <HashtagText post={post} />
                             )}
                         </div>
-                        <Card post={post} />
+                        {post.link.includes("www.youtube.com") ?
+                            <YTVideo><YouTube videoId={getYouTubeID(post.link)} opts={opts} id={post.link}  /> {post.link}</YTVideo> : <Card post={post} />}
                     </div>
                 </li>
             );
@@ -315,3 +295,6 @@ const EditText = styled.textarea`
         border-radius: none;
     }
 `;
+const YTVideo = styled.div`
+    margin:15px;
+`
