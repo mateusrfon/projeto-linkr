@@ -1,18 +1,28 @@
 import { newTab } from './utils';
 import styled from 'styled-components';
+import LinkPage from './LinkPage';
+import { useState } from 'react';
 
 export default function Card({ post }) {
+    const [iframe, setIframe] = useState(false);
+
     return (
-        <Button
-            img={post.linkImage}
-            onClick={() => {
-                newTab(post.link);
-            }}
-        >
-            <div className="link-title">{post.linkTitle}</div>
-            <div className="description">{post.linkDescription}</div>
-            <div className="url">{post.link}</div>
-        </Button>
+        <>
+            <Button
+                key={post.id}
+                img={post.linkImage}
+                onClick={() => {
+                    setIframe(true);
+                }}
+            >
+                <div className="link-title">{post.linkTitle}</div>
+                <div className="description">{post.linkDescription}</div>
+                <div className="url">{post.link}</div>
+            </Button>
+            {iframe 
+            ? <LinkPage link={post.link} iframe={iframe} setIframe={setIframe} />
+            : ''}    
+        </>
     );
 }
 
