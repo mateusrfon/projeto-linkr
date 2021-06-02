@@ -14,6 +14,8 @@ import Likes from './Likes';
 import User from './User';
 import YouTube from 'react-youtube';
 import getYouTubeID from 'get-youtube-id';
+import { IoLocationSharp } from 'react-icons/io5';
+import Geolocation from './map/Geolocation';
 import Comments from './Comments';
 import { AiOutlineComment } from 'react-icons/ai';
 
@@ -30,6 +32,9 @@ export default function Posts({
     const [edit, setEdit] = useState(false);
     const [newText, setNewText] = useState('');
     const [wait, setWait] = useState(false);
+    const [map, setMap] = useState(false);
+    const [location, setLocation] = useState('');
+    const [showComment, setShowComment] = useState(false);
 
     const opts = {
         playerVars: {
@@ -115,6 +120,17 @@ export default function Posts({
                                 <Link to={`/user/${post.user.id}`}>
                                     {post.user.username}
                                 </Link>
+                                {post.geolocation !== undefined 
+                                ? <IoLocationSharp className='geo-pin'
+                                                    onClick={() => {
+                                                        const latitude = post.geolocation.latitude;
+                                                        const longitude = post.geolocation.longitude;
+                                                        const user = post.user.username;
+                                                        setMap(true)
+                                                        setLocation({ user, latitude, longitude })
+                                                    }}/> 
+                                : ''
+                            }
                             </div>
                             <div className="text">
                                 {edit === post.id ? (
@@ -172,6 +188,7 @@ export default function Posts({
 
     return (
         <PostsList>
+            {map ? <Geolocation setMap={setMap} location={location} /> : ''}
             <InfiniteScroll
                 pageStart={0}
                 loadMore={getPosts}
@@ -257,6 +274,10 @@ const PostsList = styled.ul`
 
     .author-name {
         font-size: 19px;
+        .geo-pin {
+            font-size: 16px;
+            margin-left: 5px;
+        }
     }
 
     .text {

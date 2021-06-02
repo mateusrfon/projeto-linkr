@@ -2,25 +2,27 @@ import Iframe from 'react-iframe';
 import styled from 'styled-components';
 import { AiOutlineClose } from 'react-icons/ai';
 
-export default function LinkPage({ link, id, iframe, setIframe }) {
+export default function LinkPage({ link, setIframe }) {
+    window.onkeydown = e => {
+        if (e.which === 27) {
+            setIframe(false);
+        }
+    }
     return (
-        (iframe === id) 
-        ?(<IframeBody>
+        <IframeBody>
             <Frame>
                 <div>
                     <NewTab onClick={() => window.open(link, "_blank")}>
                         Open in new tab
                     </NewTab>
                     <AiOutlineClose 
-                        onClick={() => setIframe(false)}
-                        onKeyDown={e => {if (e.which === 27) setIframe(false)}}/>
+                        onClick={() => setIframe(false)}/>
                 </div>
                 <Iframe url={link} 
                         className='iframe' 
                         allow="encrypted-media"/>
             </Frame>
-        </IframeBody>)
-        : null
+        </IframeBody>
     );
 }
 
@@ -29,7 +31,7 @@ const IframeBody = styled.div`
     top: 0;
     left: 0;
     z-index: 9999;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.9);
     width: 100vw;
     height: 100vh;
     display: flex;
