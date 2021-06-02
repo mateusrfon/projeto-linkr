@@ -34,7 +34,7 @@ export default function Tooltip({ post }) {
                 }
                 data-event="mouseover"
             >
-                {post.likes.length}
+                {post.likes.length} likes
             </p>
             <ReactTooltip globalEventOff="mouseout" />
         </>

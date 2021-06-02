@@ -30,12 +30,17 @@ export default function Hashtags() {
                 }
             );
 
-            promise.then((response) => {
-                lastPostId =
-                    response.data.posts[response.data.posts.length - 1].id;
+            promise.then((response) => {if(response.data.posts.length !== 0){
+                lastPostId = response.data.posts[response.data.posts.length - 1].id;
                 setData(response.data.posts);
-                setIsLoading(false);
+                setIsLoading(false);}
+                else{
+                    setData([])
+                    setIsLoading(false);
+                }
+                 
             });
+            
         },
         [userInfo.token, hashtag]
     );
@@ -68,6 +73,14 @@ export default function Hashtags() {
     };
 
     return (
+        data === undefined? <Main 
+            posts={[]}
+            setPosts={setData}
+            title={`# ${hashtag}`}
+            loading={isLoading}
+            getPosts={GetMorePosts}
+            hasMore={hasMore}
+        />:
         <Main
             posts={data}
             setPosts={setData}

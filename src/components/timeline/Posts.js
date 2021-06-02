@@ -16,8 +16,17 @@ import YouTube from 'react-youtube';
 import getYouTubeID from 'get-youtube-id';
 import { IoLocationSharp } from 'react-icons/io5';
 import Geolocation from './map/Geolocation';
-//ao clicar no geolocalizador abrir mapa conforme layout
-export default function Posts({ posts, getPosts, setPosts, hasMore, isFollowing }) {
+import Comments from './Comments';
+import { AiOutlineComment } from 'react-icons/ai';
+
+export default function Posts({
+    posts,
+    getPosts,
+    attPosts,
+    setPosts,
+    hasMore,
+    isFollowing,
+}) {
     const { userInfo } = useContext(UserContext);
     const [modal, setModal] = useState(false);
     const [edit, setEdit] = useState(false);
@@ -25,7 +34,8 @@ export default function Posts({ posts, getPosts, setPosts, hasMore, isFollowing 
     const [wait, setWait] = useState(false);
     const [map, setMap] = useState(false);
     const [location, setLocation] = useState('');
-    
+    const [showComment, setShowComment] = useState(false);
+
     const opts = {
         playerVars: {
             //https://developers.google.com/youtube/player_parameters
@@ -63,6 +73,14 @@ export default function Posts({ posts, getPosts, setPosts, hasMore, isFollowing 
                             userInfo={userInfo}
                         />
                         <Tooltip post={post} />
+                        <div className="comment-icon">
+                            <AiOutlineComment
+                                onClick={() => {
+                                    setShowComment(!showComment);
+                                }}
+                            />
+                            <p>{post.commentCount} comments</p>
+                        </div>
                     </div>
                     <div className="post-infos">
                         <Icons>
@@ -92,7 +110,7 @@ export default function Posts({ posts, getPosts, setPosts, hasMore, isFollowing 
                             <DeletePost
                                 post={post}
                                 userInfo={userInfo}
-                                getPosts={getPosts}
+                                attPosts={attPosts}
                                 modal={modal}
                                 setModal={setModal}
                             />
@@ -154,6 +172,11 @@ export default function Posts({ posts, getPosts, setPosts, hasMore, isFollowing 
                             <Card post={post} />
                         )}
                     </div>
+                    <Comments
+                        showComment={showComment}
+                        userId={userInfo.user.id}
+                        id={post.id}
+                    />
                 </li>
             );
         });
@@ -184,6 +207,19 @@ const PostsList = styled.ul`
     color: white;
     font-family: 'Lato', sans-serif;
 
+    svg {
+        font-size: 22px;
+        cursor: pointer;
+    }
+
+    .comment-icon {
+        margin-top: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
     .user-icon {
         width: 50px;
         height: 50px;
@@ -213,6 +249,10 @@ const PostsList = styled.ul`
         flex-direction: column;
         align-items: center;
         width: 14%;
+
+        p {
+            font-size: 11px;
+        }
     }
 
     .post-infos {
