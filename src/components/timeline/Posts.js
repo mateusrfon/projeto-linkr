@@ -15,7 +15,7 @@ import User from './User';
 import YouTube from 'react-youtube';
 import getYouTubeID from 'get-youtube-id';
 import { IoLocationSharp } from 'react-icons/io5';
-import Geolocation from './Geolocation';
+import Geolocation from './map/Geolocation';
 //ao clicar no geolocalizador abrir mapa conforme layout
 export default function Posts({ posts, getPosts, setPosts, hasMore, isFollowing }) {
     const { userInfo } = useContext(UserContext);

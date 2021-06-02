@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { AiOutlineClose } from 'react-icons/ai';
+import Iframe from 'react-iframe';
 
 export default function Geolocation({ setMap, location }) {
     const { user, latitude, longitude } = location;
@@ -18,7 +19,10 @@ export default function Geolocation({ setMap, location }) {
                     <AiOutlineClose 
                         onClick={() => setMap(false)}/>
                 </div>
-                <p className='map'>map</p>
+                <Iframe className='map'
+                        url={'https://www.google.com/maps/embed/v1/view?key='+
+                        'AIzaSyBQDYx9_MWdA1KtWXeEgQEFEEVd1EWVO4Y&center='+
+                        `${latitude},${longitude}&zoom=7`} />
             </MapFrame>
         </MapBody>
     );
@@ -58,6 +62,19 @@ const MapFrame = styled.div`
     .map {
         width: 100%;
         height: calc(100% - 72px);
-        background-color: red;
+        background-color: #fff;
+    }
+
+    @media (max-width: 1000px) {
+        width: 80%;
+        height: 50vh;
+        padding: 5px 18px 15px 18px;
+        div {
+            font-size: 15px;
+            margin-bottom: 8px;
+            h1 {
+                font-size: 20px;
+            }
+        }
     }
 `;
