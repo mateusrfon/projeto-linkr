@@ -34,48 +34,60 @@ export default function SearchUser(){
     });
 
     return(
+        
+           
         <SearchUserBox  userList={userList.length}> 
+        
        <LenIcon><BsSearch color="#c6c6c6"/></LenIcon> 
         <DebounceInput
           minLength={3}
           debounceTimeout={300}
           type="text"
           onChange={event => {event.target.value.length >2 ? setUser(event.target.value): setUserList([])}} placeholder="Search for people and friends"/>
-          <ul>
+        
+         <ul onClick={()=>setUserList([])}>
         {
         userList.map(currentUser => {
             return(user.length >2?
-            <Link to={`/user/${currentUser.id}`}><li key={`k${currentUser.id}`}><img src={currentUser.avatar}/><h1>{currentUser.username}</h1> <p>{currentUser.isFollowingLoggedUser?<span>• following</span>:null}</p></li></Link>
+            <Link to={`/user/${currentUser.id}`}><li onClick={()=>setUserList([])} key={`k${currentUser.id}`}><img src={currentUser.avatar}/><h1>{currentUser.username}</h1> <p>{currentUser.isFollowingLoggedUser?<span>• following</span>:null}</p></li></Link>
             : null)
         })
         }
         </ul>
+       
+        
         </SearchUserBox>
+        
     )
 }
+
 
 const SearchUserBox = styled.span`
     width: 40vw;
     height: 45px;
     position: relative;
     font-family: 'Lato';
+    z-index: 2;
+   
     input{
-        width: 100%;
-        height: 100%;
+        width: 40vw;
+        height: 45px;
         background-color: #fff;
         color:#c6c6c6;
         border-radius: 8px;
         padding: 0 0 0 10px;
         
     }
+    
     ul{
-        width: 100%;
+        width: 40vw;
         height: 45px;
         font-size: 19px;
         overflow: scroll;
         overflow-x: hidden;
         max-height: 60vh;
         height:${props => props.userList >= 5? "500%":`${100*props.userList}%` } ;
+        
         
         
         img{
