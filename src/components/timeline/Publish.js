@@ -2,36 +2,68 @@ import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import UserContext from '../../contexts/UserContext';
+import { IoLocationOutline } from 'react-icons/io5';
 
 export default function Publish({ reloadTimeline }) {
     const { userInfo } = useContext(UserContext);
     const [link, setLink] = useState('');
     const [text, setText] = useState('');
     const [wait, setWait] = useState(false);
+    const [location, setLocation] = useState(false);
+    const [geolocation, setGeolocation] = useState('');
+
+    function getLocation() {
+        if (navigator.geolocation) {
+            if (geolocation === '') {
+                navigator.geolocation.getCurrentPosition(p => {
+                    const latitude = p.coords.latitude;
+                    const longitude = p.coords.longitude;
+                    setGeolocation({ latitude, longitude });
+                    setLocation(true);  
+                }, () => {
+                    alert('Localização bloqueada pelo usuário');
+                });
+            } else {
+                setLocation(false);
+                setGeolocation('');
+            }
+        } else {
+            alert("O seu navegador não suporta Geolocalização.");
+        }
+    }
 
     function publish(e) {
         e.preventDefault();
         setWait(true);
+
         const body = {
             text,
             link,
         };
+
+        if (geolocation !== '') {
+            body.geolocation = geolocation;
+        }
+        
         const config = {
             headers: {
                 Authorization: `Bearer ${userInfo.token}`,
             },
         };
+
         const request = axios.post(
             'https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts',
             body,
             config
         );
+
         request.then(() => {
             setWait(false);
             setLink('');
             setText('');
             reloadTimeline();
         });
+
         request.catch(() => {
             alert('Houve um erro ao publicar seu link');
             setWait(false);
@@ -58,9 +90,18 @@ export default function Publish({ reloadTimeline }) {
                     value={text}
                 />
                 <div>
-                    <button disabled={wait}>
+                    <GeoBtn location={location.toString()} 
+                            type='button' 
+                            onClick={getLocation}
+                    >
+                        <IoLocationOutline />
+                        <span>
+                            {location ? 'Localização ativada' : 'Localização desativada'}
+                        </span>
+                    </GeoBtn>
+                    <PublishBtn disabled={wait}>
                         {wait ? 'Publicando...' : 'Publicar'}
-                    </button>
+                    </PublishBtn>
                 </div>
             </Form>
         </PostBox>
@@ -119,20 +160,10 @@ const Form = styled.form`
     }
     div {
         width: 100%;
-        display: flex;
-        justify-content: flex-end;
-    }
-    button {
-        width: 112px;
-        height: 31px;
-        margin-top: 0;
         margin-bottom: 16px;
-        background-color: #1877f2;
-        border-radius: 5px;
-        color: #fff;
-        font-family: 'Lato';
-        font-size: 14px;
-        font-weight: 700;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
     @media (max-width: 1000px) {
         align-items: center;
@@ -140,5 +171,32 @@ const Form = styled.form`
         button {
             margin-bottom: 12px;
         }
+    }
+`;
+
+const PublishBtn = styled.button`
+        width: 112px;
+        height: 31px;
+        margin-top: 0;
+        background-color: #1877f2;
+        border-radius: 5px;
+        color: #fff;
+        font-family: 'Lato';
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+`;
+
+const GeoBtn = styled.button`
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    font-family: 'Lato';
+    font-weight: 300;
+    color: ${props => props.location === 'true' ? '#238700' : '#949494'};
+    cursor: pointer;
+    span {
+        margin-left: 5px;
     }
 `;
