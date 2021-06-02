@@ -4,7 +4,7 @@ import Iframe from 'react-iframe';
 
 export default function Geolocation({ setMap, location }) {
     const { user, latitude, longitude } = location;
-    console.log(user)
+    
     window.onkeydown = (e) => {
         if (e.key === 'Escape') {
             setMap(false);
