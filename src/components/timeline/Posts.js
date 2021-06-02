@@ -15,6 +15,7 @@ import User from './User';
 import YouTube from 'react-youtube';
 import getYouTubeID from 'get-youtube-id';
 import { IoLocationSharp } from 'react-icons/io5';
+import Geolocation from './Geolocation';
 //ao clicar no geolocalizador abrir mapa conforme layout
 export default function Posts({ posts, getPosts, setPosts, hasMore, isFollowing }) {
     const { userInfo } = useContext(UserContext);
@@ -22,6 +23,8 @@ export default function Posts({ posts, getPosts, setPosts, hasMore, isFollowing 
     const [edit, setEdit] = useState(false);
     const [newText, setNewText] = useState('');
     const [wait, setWait] = useState(false);
+    const [map, setMap] = useState(false);
+    const [location, setLocation] = useState('');
     
     const opts = {
         playerVars: {
@@ -100,7 +103,13 @@ export default function Posts({ posts, getPosts, setPosts, hasMore, isFollowing 
                             </Link>
                             {post.geolocation !== undefined 
                                 ? <IoLocationSharp className='geo-pin'
-                                                    /> 
+                                                    onClick={() => {
+                                                        const latitude = post.geolocation.latitude;
+                                                        const longitude = post.geolocation.longitude;
+                                                        const user = post.user.username;
+                                                        setMap(true)
+                                                        setLocation({ user, latitude, longitude })
+                                                    }}/> 
                                 : ''
                             }
                         </div>
@@ -154,6 +163,7 @@ export default function Posts({ posts, getPosts, setPosts, hasMore, isFollowing 
 
     return (
         <PostsList>
+            {map ? <Geolocation setMap={setMap} location={location} /> : ''}
             <InfiniteScroll
                 pageStart={0}
                 loadMore={getPosts}
