@@ -7,7 +7,7 @@ import UserContext from '../../contexts/UserContext';
 import DeletePost from './Deletepost';
 import InfiniteScroll from 'react-infinite-scroller';
 import Card from './Card';
-import { SwitchEditPost, EndEditPost } from './utils';
+import { SwitchEditPost, EndEditPost, showComments } from './utils';
 import Tooltip from './Tooltip';
 import HashtagText from './HashtagText';
 import Likes from './Likes';
@@ -34,7 +34,7 @@ export default function Posts({
     const [wait, setWait] = useState(false);
     const [map, setMap] = useState(false);
     const [location, setLocation] = useState('');
-    const [showComment, setShowComment] = useState(false);
+    const [comment, setComment] = useState([]);
 
     const opts = {
         playerVars: {
@@ -63,120 +63,139 @@ export default function Posts({
         posts.map((post, i) => {
             items.push(
                 <li key={post.id}>
-                    <div className="icons">
-                        <User post={post} />
-                        <Likes
-                            post={post}
-                            i={i}
-                            setPosts={setPosts}
-                            posts={posts}
-                            userInfo={userInfo}
-                        />
-                        <Tooltip post={post} />
-                        <div className="comment-icon">
-                            <AiOutlineComment
-                                onClick={() => {
-                                    setShowComment(!showComment);
-                                }}
+                    <div className="post">
+                        <div className="icons">
+                            <User post={post} />
+                            <Likes
+                                post={post}
+                                i={i}
+                                setPosts={setPosts}
+                                posts={posts}
+                                userInfo={userInfo}
                             />
-                            <p>{post.commentCount} comments</p>
+                            <Tooltip post={post} />
+                            <div className="comment-icon">
+                                <AiOutlineComment
+                                    onClick={() => {
+                                        let array = [...comment];
+                                        array[i] = post;
+                                        showComments(array, i, setComment);
+                                    }}
+                                />
+                                <p>{post.commentCount} comments</p>
+                            </div>
                         </div>
-                    </div>
-                    <div className="post-infos">
-                        <Icons>
-                            {post.user.id === userInfo.user.id ? (
-                                <span>
-                                    <TiPencil
+                        <div className="post-infos">
+                            <Icons>
+                                {post.user.id === userInfo.user.id ? (
+                                    <span>
+                                        <TiPencil
+                                            color="white"
+                                            onClick={() =>
+                                                SwitchEditPost(
+                                                    post,
+                                                    setNewText,
+                                                    setEdit,
+                                                    edit
+                                                )
+                                            }
+                                        />
+                                    </span>
+                                ) : null}
+                                {post.user.id === userInfo.user.id ? (
+                                    <FiTrash
                                         color="white"
-                                        onClick={() =>
-                                            SwitchEditPost(
+                                        onClick={() => setModal(post.id)}
+                                    />
+                                ) : null}
+                            </Icons>
+                            {modal === post.id ? (
+                                <DeletePost
+                                    post={post}
+                                    userInfo={userInfo}
+                                    attPosts={attPosts}
+                                    modal={modal}
+                                    setModal={setModal}
+                                />
+                            ) : null}
+                            <div className="author-name">
+                                <Link to={`/user/${post.user.id}`}>
+                                    {post.user.username}
+                                </Link>
+                                {post.geolocation !== undefined ? (
+                                    <IoLocationSharp
+                                        className="geo-pin"
+                                        onClick={() => {
+                                            const latitude =
+                                                post.geolocation.latitude;
+                                            const longitude =
+                                                post.geolocation.longitude;
+                                            const user = post.user.username;
+                                            setMap(true);
+                                            setLocation({
+                                                user,
+                                                latitude,
+                                                longitude,
+                                            });
+                                        }}
+                                    />
+                                ) : (
+                                    ''
+                                )}
+                            </div>
+                            <div className="text">
+                                {edit === post.id ? (
+                                    <EditText
+                                        disabled={wait}
+                                        autoFocus
+                                        value={newText}
+                                        onChange={(e) =>
+                                            setNewText(e.target.value)
+                                        }
+                                        onKeyDown={(e) =>
+                                            EndEditPost(
+                                                e,
                                                 post,
-                                                setNewText,
+                                                { text: newText },
+                                                config,
                                                 setEdit,
-                                                edit
+                                                setPosts,
+                                                posts,
+                                                setWait
                                             )
                                         }
                                     />
-                                </span>
-                            ) : null}
-                            {post.user.id === userInfo.user.id ? (
-                                <FiTrash
-                                    color="white"
-                                    onClick={() => setModal(post.id)}
-                                />
-                            ) : null}
-                        </Icons>
-                        {modal === post.id ? (
-                            <DeletePost
-                                post={post}
-                                userInfo={userInfo}
-                                attPosts={attPosts}
-                                modal={modal}
-                                setModal={setModal}
-                            />
-                        ) : null}
-                        <div className="author-name">
-                            <Link to={`/user/${post.user.id}`}>
-                                {post.user.username}
-                            </Link>
-                            {post.geolocation !== undefined 
-                                ? <IoLocationSharp className='geo-pin'
-                                                    onClick={() => {
-                                                        const latitude = post.geolocation.latitude;
-                                                        const longitude = post.geolocation.longitude;
-                                                        const user = post.user.username;
-                                                        setMap(true)
-                                                        setLocation({ user, latitude, longitude })
-                                                    }}/> 
-                                : ''
-                            }
-                        </div>
-                        <div className="text">
-                            {edit === post.id ? (
-                                <EditText
-                                    disabled={wait}
-                                    autoFocus
-                                    value={newText}
-                                    onChange={(e) => setNewText(e.target.value)}
-                                    onKeyDown={(e) =>
-                                        EndEditPost(
-                                            e,
-                                            post,
-                                            { text: newText },
-                                            config,
-                                            setEdit,
-                                            setPosts,
-                                            posts,
-                                            setWait
-                                        )
-                                    }
-                                />
+                                ) : (
+                                    <HashtagText post={post} />
+                                )}
+                            </div>
+                            {post.link.includes('www.youtube.com') ? (
+                                <YTVideo>
+                                    <YouTube
+                                        className="video"
+                                        videoId={getYouTubeID(post.link)}
+                                        opts={opts}
+                                        id={post.link}
+                                    />{' '}
+                                    <a href={post.link} target="_blank">
+                                        {' '}
+                                        {post.link}
+                                    </a>
+                                </YTVideo>
                             ) : (
-                                <HashtagText post={post} />
+                                <Card post={post} />
                             )}
                         </div>
-                        {post.link.includes('www.youtube.com') ? (
-                            <YTVideo>
-                                <YouTube
-                                    className="video"
-                                    videoId={getYouTubeID(post.link)}
-                                    opts={opts}
-                                    id={post.link}
-                                />{' '}
-                                <a href={post.link} target="_blank">
-                                    {' '}
-                                    {post.link}
-                                </a>
-                            </YTVideo>
-                        ) : (
-                            <Card post={post} />
-                        )}
                     </div>
-                    <Comments
-                        showComment={showComment}
-                        userId={userInfo.user.id}
-                        id={post.id}
-                    />
+                    <div
+                        hidden={
+                            comment[i] !== undefined
+                                ? !comment[i].hasClicked
+                                : true
+                        }
+                    >
+                        <Comments post={post} />
+                    </div>
                 </li>
             );
         });
@@ -206,6 +225,7 @@ export default function Posts({
 const PostsList = styled.ul`
     color: white;
     font-family: 'Lato', sans-serif;
+    position: relative;
 
     svg {
         font-size: 22px;
@@ -234,14 +254,20 @@ const PostsList = styled.ul`
     }
 
     li {
+        margin-bottom: 30px;
+        list-style: none;
+        position: relative;
+    }
+
+    .post {
         width: 611px;
         min-height: 276px;
         height: auto;
-        margin-bottom: 30px;
-        border-radius: 16px;
         background-color: #171717;
+        border-radius: 16px;
         display: flex;
         position: relative;
+        z-index: 2;
     }
 
     .icons {
@@ -252,6 +278,7 @@ const PostsList = styled.ul`
 
         p {
             font-size: 11px;
+            word-break: break-all;
         }
     }
 
@@ -303,7 +330,7 @@ const PostsList = styled.ul`
     }
 
     @media (max-width: 1000px) {
-        li {
+        .post {
             width: 100%;
             border-radius: 0px;
             padding: 0px 10px;
