@@ -14,10 +14,13 @@ import Likes from './Likes';
 import User from './User';
 import YouTube from 'react-youtube';
 import getYouTubeID from 'get-youtube-id';
+import Comments from './Comments';
+import { AiOutlineComment } from 'react-icons/ai';
 
 export default function Posts({
     posts,
     getPosts,
+    attPosts,
     setPosts,
     hasMore,
     isFollowing,
@@ -27,6 +30,7 @@ export default function Posts({
     const [edit, setEdit] = useState(false);
     const [newText, setNewText] = useState('');
     const [wait, setWait] = useState(false);
+    const [showComment, setShowComment] = useState(false);
 
     const opts = {
         playerVars: {
@@ -65,6 +69,14 @@ export default function Posts({
                             userInfo={userInfo}
                         />
                         <Tooltip post={post} />
+                        <div className="comment-icon">
+                            <AiOutlineComment
+                                onClick={() => {
+                                    setShowComment(!showComment);
+                                }}
+                            />
+                            <p>{post.commentCount} comments</p>
+                        </div>
                     </div>
                     <div className="post-infos">
                         <Icons>
@@ -94,7 +106,7 @@ export default function Posts({
                             <DeletePost
                                 post={post}
                                 userInfo={userInfo}
-                                getPosts={getPosts}
+                                attPosts={attPosts}
                                 modal={modal}
                                 setModal={setModal}
                             />
@@ -145,6 +157,11 @@ export default function Posts({
                             <Card post={post} />
                         )}
                     </div>
+                    <Comments
+                        showComment={showComment}
+                        userId={userInfo.user.id}
+                        id={post.id}
+                    />
                 </li>
             );
         });
@@ -173,6 +190,19 @@ export default function Posts({
 const PostsList = styled.ul`
     color: white;
     font-family: 'Lato', sans-serif;
+
+    svg {
+        font-size: 22px;
+        cursor: pointer;
+    }
+
+    .comment-icon {
+        margin-top: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
 
     .user-icon {
         width: 50px;
@@ -203,6 +233,10 @@ const PostsList = styled.ul`
         flex-direction: column;
         align-items: center;
         width: 14%;
+
+        p {
+            font-size: 11px;
+        }
     }
 
     .post-infos {

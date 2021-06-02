@@ -30,7 +30,7 @@ export default function Publish({ reloadTimeline }) {
             setWait(false);
             setLink('');
             setText('');
-            reloadTimeline(false);
+            reloadTimeline();
         });
         request.catch(() => {
             alert('Houve um erro ao publicar seu link');

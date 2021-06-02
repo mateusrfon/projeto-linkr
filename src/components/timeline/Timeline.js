@@ -56,7 +56,7 @@ export default function Timeline() {
     }, [userInfo.token]);
 
     useEffect(() => {
-        handleGetPosts(true);
+        handleGetPosts();
         GetFollowings();
     }, [handleGetPosts, GetFollowings]);
 
@@ -108,6 +108,7 @@ export default function Timeline() {
             title="timeline"
             loading={isLoading}
             getPosts={GetMorePosts}
+            attPosts={handleGetPosts}
             hasMore={hasMore}
             isFollowing={isFollowing}
         />

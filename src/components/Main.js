@@ -12,7 +12,7 @@ export default function Main(props) {
             <div>
                 <div className="container">
                     {props.title === 'timeline' ? (
-                        <Publish reloadTimeline={props.getPosts} />
+                        <Publish reloadTimeline={props.attPosts} />
                     ) : (
                         ''
                     )}
@@ -27,6 +27,7 @@ export default function Main(props) {
                             getPosts={props.getPosts}
                             setPosts={props.setPosts}
                             hasMore={props.hasMore}
+                            attPosts={props.attPosts}
                             isFollowing={props.isFollowing || false}
                         />
                     )}
