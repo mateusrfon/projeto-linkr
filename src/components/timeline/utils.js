@@ -99,3 +99,14 @@ export function EditPost(
 export function newTab(link) {
     window.open(link, '_blank');
 }
+
+export function showComments(posts, setPosts, i) {
+    let newPosts = [...posts];
+    if (newPosts[i].hasClicked === true) {
+        newPosts[i].hasClicked = false;
+        setPosts(newPosts);
+    } else {
+        newPosts[i].hasClicked = true;
+        setPosts(newPosts);
+    }
+}
