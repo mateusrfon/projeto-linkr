@@ -20,9 +20,7 @@ export default function Geolocation({ setMap, location }) {
                         onClick={() => setMap(false)}/>
                 </div>
                 <Iframe className='map'
-                        url={'https://www.google.com/maps/embed/v1/view?key='+
-                        'AIzaSyBQDYx9_MWdA1KtWXeEgQEFEEVd1EWVO4Y&center='+
-                        `${latitude},${longitude}&zoom=7`} />
+                        url={`https://www.google.com/maps/@${latitude},${longitude},17z?hl=pt-BR`} />
             </MapFrame>
         </MapBody>
     );
