@@ -20,6 +20,7 @@ import { AiOutlineComment } from 'react-icons/ai';
 export default function Posts({
     posts,
     getPosts,
+    attPosts,
     setPosts,
     hasMore,
     isFollowing,
@@ -105,7 +106,7 @@ export default function Posts({
                             <DeletePost
                                 post={post}
                                 userInfo={userInfo}
-                                getPosts={getPosts}
+                                attPosts={attPosts}
                                 modal={modal}
                                 setModal={setModal}
                             />
@@ -156,7 +157,11 @@ export default function Posts({
                             <Card post={post} />
                         )}
                     </div>
-                    <Comments disable={showComment} />
+                    <Comments
+                        showComment={showComment}
+                        userId={userInfo.user.id}
+                        id={post.id}
+                    />
                 </li>
             );
         });
