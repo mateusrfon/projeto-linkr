@@ -48,8 +48,6 @@ export default function UserPosts() {
         handleGetPosts(true);
     }, [handleGetPosts]);
 
-    useInterval(handleGetPosts, 15000);
-
     const GetMorePosts = () => {
         const promise = axios.get(
             `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/users/${id}/posts/?olderThan=${lastPostId}`,

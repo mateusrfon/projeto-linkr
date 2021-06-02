@@ -100,13 +100,12 @@ export function newTab(link) {
     window.open(link, '_blank');
 }
 
-export function showComments(posts, setPosts, i) {
-    let newPosts = [...posts];
-    if (newPosts[i].hasClicked === true) {
-        newPosts[i].hasClicked = false;
-        setPosts(newPosts);
+export function showComments(posts, i, setComment) {
+    if (posts[i].hasClicked === true) {
+        posts[i].hasClicked = false;
+        setComment(posts);
     } else {
-        newPosts[i].hasClicked = true;
-        setPosts(newPosts);
+        posts[i].hasClicked = true;
+        setComment(posts);
     }
 }

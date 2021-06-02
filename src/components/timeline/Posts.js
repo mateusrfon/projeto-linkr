@@ -34,7 +34,7 @@ export default function Posts({
     const [wait, setWait] = useState(false);
     const [map, setMap] = useState(false);
     const [location, setLocation] = useState('');
-    const [showComment, setShowComment] = useState(false);
+    const [comment, setComment] = useState([]);
 
     const opts = {
         playerVars: {
@@ -77,7 +77,9 @@ export default function Posts({
                             <div className="comment-icon">
                                 <AiOutlineComment
                                     onClick={() => {
-                                        showComments(posts, setPosts, i);
+                                        let array = [...comment];
+                                        array[i] = post;
+                                        showComments(array, i, setComment);
                                     }}
                                 />
                                 <p>{post.commentCount} comments</p>
@@ -120,17 +122,26 @@ export default function Posts({
                                 <Link to={`/user/${post.user.id}`}>
                                     {post.user.username}
                                 </Link>
-                                {post.geolocation !== undefined 
-                                ? <IoLocationSharp className='geo-pin'
-                                                    onClick={() => {
-                                                        const latitude = post.geolocation.latitude;
-                                                        const longitude = post.geolocation.longitude;
-                                                        const user = post.user.username;
-                                                        setMap(true)
-                                                        setLocation({ user, latitude, longitude })
-                                                    }}/> 
-                                : ''
-                            }
+                                {post.geolocation !== undefined ? (
+                                    <IoLocationSharp
+                                        className="geo-pin"
+                                        onClick={() => {
+                                            const latitude =
+                                                post.geolocation.latitude;
+                                            const longitude =
+                                                post.geolocation.longitude;
+                                            const user = post.user.username;
+                                            setMap(true);
+                                            setLocation({
+                                                user,
+                                                latitude,
+                                                longitude,
+                                            });
+                                        }}
+                                    />
+                                ) : (
+                                    ''
+                                )}
                             </div>
                             <div className="text">
                                 {edit === post.id ? (
@@ -176,8 +187,14 @@ export default function Posts({
                             )}
                         </div>
                     </div>
-                    <div hidden={!post.hasClicked}>
-                        <Comments userId={userInfo.user.id} id={post.id} />
+                    <div
+                        hidden={
+                            comment[i] !== undefined
+                                ? !comment[i].hasClicked
+                                : true
+                        }
+                    >
+                        <Comments userId={userInfo.user.id} post={post} />
                     </div>
                 </li>
             );

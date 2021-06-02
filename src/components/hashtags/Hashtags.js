@@ -30,17 +30,17 @@ export default function Hashtags() {
                 }
             );
 
-            promise.then((response) => {if(response.data.posts.length !== 0){
-                lastPostId = response.data.posts[response.data.posts.length - 1].id;
-                setData(response.data.posts);
-                setIsLoading(false);}
-                else{
-                    setData([])
+            promise.then((response) => {
+                if (response.data.posts.length !== 0) {
+                    lastPostId =
+                        response.data.posts[response.data.posts.length - 1].id;
+                    setData(response.data.posts);
+                    setIsLoading(false);
+                } else {
+                    setData([]);
                     setIsLoading(false);
                 }
-                 
             });
-            
         },
         [userInfo.token, hashtag]
     );
@@ -48,8 +48,6 @@ export default function Hashtags() {
     useEffect(() => {
         handleGetPosts(true);
     }, [handleGetPosts]);
-
-    useInterval(handleGetPosts, 15000);
 
     const GetMorePosts = () => {
         const promise = axios.get(
@@ -72,15 +70,16 @@ export default function Hashtags() {
         });
     };
 
-    return (
-        data === undefined? <Main 
+    return data === undefined ? (
+        <Main
             posts={[]}
             setPosts={setData}
             title={`# ${hashtag}`}
             loading={isLoading}
             getPosts={GetMorePosts}
             hasMore={hasMore}
-        />:
+        />
+    ) : (
         <Main
             posts={data}
             setPosts={setData}
