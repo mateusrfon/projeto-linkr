@@ -194,7 +194,7 @@ export default function Posts({
                                 : true
                         }
                     >
-                        <Comments userId={userInfo.user.id} post={post} />
+                        <Comments post={post} />
                     </div>
                 </li>
             );
@@ -278,6 +278,7 @@ const PostsList = styled.ul`
 
         p {
             font-size: 11px;
+            word-break: break-all;
         }
     }
 
@@ -329,7 +330,7 @@ const PostsList = styled.ul`
     }
 
     @media (max-width: 1000px) {
-        li {
+        .post {
             width: 100%;
             border-radius: 0px;
             padding: 0px 10px;
