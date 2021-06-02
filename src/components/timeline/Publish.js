@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import axios from 'axios';
 import UserContext from '../../contexts/UserContext';
 import { IoLocationOutline } from 'react-icons/io5';
-//Caso possível, pegar informação e enviar ao servidor
+
 export default function Publish({ reloadTimeline }) {
     const { userInfo } = useContext(UserContext);
     const [link, setLink] = useState('');
@@ -35,26 +35,35 @@ export default function Publish({ reloadTimeline }) {
     function publish(e) {
         e.preventDefault();
         setWait(true);
+
         const body = {
             text,
             link,
         };
+
+        if (geolocation !== '') {
+            body.geolocation = geolocation;
+        }
+        
         const config = {
             headers: {
                 Authorization: `Bearer ${userInfo.token}`,
             },
         };
+
         const request = axios.post(
             'https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts',
             body,
             config
         );
+
         request.then(() => {
             setWait(false);
             setLink('');
             setText('');
             reloadTimeline(false);
         });
+
         request.catch(() => {
             alert('Houve um erro ao publicar seu link');
             setWait(false);

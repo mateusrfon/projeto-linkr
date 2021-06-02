@@ -14,21 +14,15 @@ import Likes from './Likes';
 import User from './User';
 import YouTube from 'react-youtube';
 import getYouTubeID from 'get-youtube-id';
-//colocar geolocalizador
+import { IoLocationSharp } from 'react-icons/io5';
 //ao clicar no geolocalizador abrir mapa conforme layout
-export default function Posts({
-    posts,
-    getPosts,
-    setPosts,
-    hasMore,
-    isFollowing,
-}) {
+export default function Posts({ posts, getPosts, setPosts, hasMore, isFollowing }) {
     const { userInfo } = useContext(UserContext);
     const [modal, setModal] = useState(false);
     const [edit, setEdit] = useState(false);
     const [newText, setNewText] = useState('');
     const [wait, setWait] = useState(false);
-
+    
     const opts = {
         playerVars: {
             //https://developers.google.com/youtube/player_parameters
@@ -104,6 +98,11 @@ export default function Posts({
                             <Link to={`/user/${post.user.id}`}>
                                 {post.user.username}
                             </Link>
+                            {post.geolocation !== undefined 
+                                ? <IoLocationSharp className='geo-pin'
+                                                    /> 
+                                : ''
+                            }
                         </div>
                         <div className="text">
                             {edit === post.id ? (
@@ -216,6 +215,10 @@ const PostsList = styled.ul`
 
     .author-name {
         font-size: 19px;
+        .geo-pin {
+            font-size: 16px;
+            margin-left: 5px;
+        }
     }
 
     .text {
