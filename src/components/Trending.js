@@ -1,13 +1,16 @@
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import { useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import UserContext from '../contexts/UserContext';
+import {HiOutlineHashtag} from 'react-icons/hi'
 
 export default function Trending() {
+    const history = useHistory();
     const { userInfo } = useContext(UserContext);
     const [hashtags, setHashtags] = useState([]);
+    const [searchHashtag, setSearchHashtag] = useState('');
 
     const handleGetHashtags = useCallback(() => {
         const promise = axios.get(
@@ -28,6 +31,11 @@ export default function Trending() {
         handleGetHashtags();
     }, [handleGetHashtags]);
 
+    function hashtagPage(event){
+        event.preventDefault();
+        history.push(`/hashtag/${searchHashtag}`)
+    }
+    
     return (
         <Container className="container-aside">
             <Aside>
@@ -44,7 +52,10 @@ export default function Trending() {
                             </div>
                         );
                     })}
+                    <form onSubmit={hashtagPage} ><HiOutlineHashtag/>
+                     <input type="text" placeholder='type a hashtag' onChange={(e)=>setSearchHashtag(e.target.value)} /></form>
                 </div>
+               
             </Aside>
         </Container>
     );
@@ -58,15 +69,53 @@ const Container = styled.div`
         @media (max-width: 1275px) {
             width: 150px;
             margin-left: 120px;
+            height: 455px;
+            
         }
     }
 `;
 
 const Aside = styled.aside`
     width: 301px;
-    height: 420px;
+    height: 430px;
     background: #171717;
     border-radius: 16px;
+    div{
+        form{
+            
+            position: relative;
+                svg{
+                    color:white;
+                    position: absolute;
+                    left: 18px;
+                    top:7px;
+                    
+                }
+                
+            input{
+                width:269px;
+                height: 35px;
+                padding: 0 0 0 25px;
+                border-radius: 8px;
+                background-color: #252525;
+                margin: 0 auto 0 15px;
+                font-size: 16px;
+                color: #575757;
+                
+                }
+                
+                    
+                }
+            
+            @media(max-width:1275px){
+                
+                input{
+                    width:135px;
+                    padding: 0 0 0 5px;
+                    margin: 0 auto 0 7px;
+                }
+            }
+            }
 
     .links {
         height: 345px;
