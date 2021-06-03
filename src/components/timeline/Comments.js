@@ -10,6 +10,7 @@ export default function Comments({ post }) {
     const [comments, setComments] = useState([]);
     const { userInfo } = useContext(UserContext);
     const [comment, setComment] = useState('');
+    const [follows, setFollows] = useState([]);
 
     const getComments = useCallback(() => {
         const promise = axios.get(
@@ -27,8 +28,21 @@ export default function Comments({ post }) {
     }, [userInfo.token, post.id]);
 
     useEffect(() => {
+        const promise = axios.get(
+            `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/users/follows`,
+            {
+                headers: {
+                    Authorization: `Bearer ${userInfo.token}`,
+                },
+            }
+        );
+
+        promise.then((response) => {
+            setFollows(response.data.users);
+        });
+
         getComments();
-    }, [getComments]);
+    }, [getComments, userInfo.token, setFollows]);
 
     function sendComment(id) {
         const promise = axios.post(
@@ -60,7 +74,10 @@ export default function Comments({ post }) {
 
     return (
         <Container length={comments.length}>
-            <Comment className="comments">
+            <Comment
+                className="comments"
+                bool={post.link.includes('www.youtube.com')}
+            >
                 {comments.map((c) => {
                     return (
                         <li>
@@ -70,14 +87,18 @@ export default function Comments({ post }) {
                                     <div className="user-info">
                                         <Link
                                             className="name"
-                                            to={`/user/${post.user.id}`}
+                                            to={`/user/${c.user.id}`}
                                         >
-                                            {post.user.username}
+                                            {c.user.username}
                                         </Link>
                                         <span>
                                             {c.user.id === post.user.id
                                                 ? 'post`s author'
-                                                : 'following'}
+                                                : follows.find(
+                                                      (f) => f.id === c.user.id
+                                                  )
+                                                ? 'following'
+                                                : ''}
                                         </span>
                                     </div>
                                     <p>{c.text}</p>
@@ -86,25 +107,27 @@ export default function Comments({ post }) {
                         </li>
                     );
                 })}
-                <div className="input-comment">
-                    <User post={post} />
-                    <input
-                        value={comment}
-                        placeholder="write a comment..."
-                        onChange={(e) => {
-                            setComment(e.target.value);
-                        }}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
+                <div className="input-box">
+                    <div className="input-comment">
+                        <User post={userInfo} />
+                        <input
+                            value={comment}
+                            placeholder="write a comment..."
+                            onChange={(e) => {
+                                setComment(e.target.value);
+                            }}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    sendComment(post.id, comment);
+                                }
+                            }}
+                        ></input>
+                        <IoPaperPlaneOutline
+                            onClick={() => {
                                 sendComment(post.id, comment);
-                            }
-                        }}
-                    ></input>
-                    <IoPaperPlaneOutline
-                        onClick={() => {
-                            sendComment(post.id, comment);
-                        }}
-                    />
+                            }}
+                        />
+                    </div>
                 </div>
             </Comment>
         </Container>
@@ -124,11 +147,7 @@ const Comment = styled.ul`
     align-items: center;
 
     &:nth-child(1) {
-        padding-top: 140px;
-    }
-
-    li:last-of-type {
-        margin-bottom: 83px;
+        padding-top: ${({ bool }) => (bool ? '140px' : '22px')};
     }
 
     .name {
@@ -138,27 +157,23 @@ const Comment = styled.ul`
     li {
         height: 70px;
         width: 90%;
-        margin-bottom: 0px;
+        margin-bottom: 0px !important;
         border-bottom: 1px solid #353535;
         display: flex;
-        align-items: center;
 
         .comment-box {
             padding-top: 5px;
             display: flex;
             height: 100%;
-
-            &:nth-child(1) {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
+            width: 100%;
+            align-items: center;
         }
 
         .user-info {
             display: flex;
             flex-direction: row;
-            width: 160px;
+            justify-content: flex-start;
+            width: auto;
             height: auto;
         }
 
@@ -188,6 +203,11 @@ const Comment = styled.ul`
         }
     }
 
+    .input-box {
+        width: 90%;
+        margin-top: 83px;
+    }
+
     div.input-comment {
         width: 90%;
         height: 83px;
@@ -196,6 +216,7 @@ const Comment = styled.ul`
         display: flex;
         align-items: center;
         justify-content: space-between;
+
         input {
             background-color: #252525;
             width: 85%;
