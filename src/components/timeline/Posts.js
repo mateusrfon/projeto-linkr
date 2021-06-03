@@ -60,7 +60,7 @@ export default function Posts({
 
     function pushItems() {
         posts.map((post, i) => {
-            console.log(post)
+            
             items.push(
                 <PostBox>
                    {post.repostCount>0 && post.repostedBy!== undefined? <div><BiRepost/> Re-posted by <b>{post.repostedBy.username}</b></div>:null}

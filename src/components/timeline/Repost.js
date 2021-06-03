@@ -10,7 +10,7 @@ export default function Repost({post,userInfo,attPosts,shareModal,setShareModal}
     return (
         <>
             <Confirm onClick={() => setShareModal(false)}>
-                {console.log(post.id,post.repostId,shareModal)}
+                
                 <div>
                     <h1>
                         {disabled
