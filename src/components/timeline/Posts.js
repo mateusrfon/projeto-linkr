@@ -7,13 +7,15 @@ import UserContext from '../../contexts/UserContext';
 import DeletePost from './Deletepost';
 import InfiniteScroll from 'react-infinite-scroller';
 import Card from './Card';
-import { SwitchEditPost, EndEditPost } from './utils';
+import { SwitchEditPost, EndEditPost, showComments } from './utils';
 import Tooltip from './Tooltip';
 import HashtagText from './HashtagText';
 import Likes from './Likes';
 import User from './User';
 import YouTube from 'react-youtube';
 import getYouTubeID from 'get-youtube-id';
+import { IoLocationSharp } from 'react-icons/io5';
+import Geolocation from './map/Geolocation';
 import Comments from './Comments';
 import { AiOutlineComment } from 'react-icons/ai';
 import {BiRepost} from 'react-icons/bi'
@@ -33,7 +35,9 @@ export default function Posts({
     const [edit, setEdit] = useState(false);
     const [newText, setNewText] = useState('');
     const [wait, setWait] = useState(false);
-    const [showComment, setShowComment] = useState(false);
+    const [map, setMap] = useState(false);
+    const [location, setLocation] = useState('');
+    const [comment, setComment] = useState([]);
 
     const opts = {
         playerVars: {
@@ -63,119 +67,146 @@ export default function Posts({
             
             items.push(
                 <PostBox>
-                   {post.repostCount>0 && post.repostedBy!== undefined? <div><BiRepost/> Re-posted by <b>{post.repostedBy.username}</b></div>:null}
-                <li  key={post.id}>
-                    <div className="icons">
-                        <User post={post} />
-                        <Likes
-                            post={post}
-                            i={i}
-                            setPosts={setPosts}
-                            posts={posts}
-                            userInfo={userInfo}
-                        />
-                        <Tooltip post={post} />
-                        <div className="comment-icon">
-                            <AiOutlineComment
-                                onClick={() => {
-                                    setShowComment(!showComment);
-                                }}
+                    {post.repostCount>0 && post.repostedBy!== undefined? <div><BiRepost/> Re-posted by <b>{post.repostedBy.username}</b></div>:null}
+                <li key={post.id}>
+                    <div className="post">
+                        <div className="icons">
+                            <User post={post} />
+                            <Likes
+                                post={post}
+                                i={i}
+                                setPosts={setPosts}
+                                posts={posts}
+                                userInfo={userInfo}
                             />
-                            <p>{post.commentCount} comments</p>
+                            <Tooltip post={post} />
                             <div className="comment-icon">
-                            <BiRepost key={`r${post.id}`}onClick={()=>setShareModal('repostedBy' in post? post.repostId:post.id)}/>
+                                <AiOutlineComment
+                                    onClick={() => {
+                                        let array = [...comment];
+                                        array[i] = post;
+                                        showComments(array, i, setComment);
+                                    }}
+                                />
+                                <p>{post.commentCount} comments</p>
+                                <BiRepost key={`r${post.id}`}onClick={()=>setShareModal('repostedBy' in post? post.repostId:post.id)}/>
                             {shareModal === post.repostId || (shareModal === post.id && post.repostId === undefined)? <Repost post={post} userInfo={userInfo} attPosts={attPosts} shareModal={shareModal} setShareModal={setShareModal}/>:null}
                             <p>{'repostCount' in post? post.repostCount:"0"} shares</p>
                             </div>
                         </div>
-                    </div>
-                    <div className="post-infos">
-                        <Icons>
-                            {post.user.id === userInfo.user.id ? (
-                                <span>
-                                    <TiPencil
+                        <div className="post-infos">
+                            <Icons>
+                                {post.user.id === userInfo.user.id ? (
+                                    <span>
+                                        <TiPencil
+                                            color="white"
+                                            onClick={() =>
+                                                SwitchEditPost(
+                                                    post,
+                                                    setNewText,
+                                                    setEdit,
+                                                    edit
+                                                )
+                                            }
+                                        />
+                                    </span>
+                                ) : null}
+                                {post.user.id === userInfo.user.id? (
+                                    <FiTrash
                                         color="white"
-                                        onClick={() =>
-                                            SwitchEditPost(
+                                        onClick={() => setModal(post.id)}
+                                    />
+                                ) : null}
+                            </Icons>
+                            {modal === post.repostId || (modal === post.id && post.repostId === undefined) ? (
+                                <DeletePost
+                                    post={post}
+                                    userInfo={userInfo}
+                                    attPosts={attPosts}
+                                    modal={modal}
+                                    setModal={setModal}
+                                />
+                            ) :null}
+                            <div className="author-name">
+                                <Link to={`/user/${post.user.id}`}>
+                                    {post.user.username}
+                                </Link>
+                                {post.geolocation !== undefined ? (
+                                    <IoLocationSharp
+                                        className="geo-pin"
+                                        onClick={() => {
+                                            const latitude =
+                                                post.geolocation.latitude;
+                                            const longitude =
+                                                post.geolocation.longitude;
+                                            const user = post.user.username;
+                                            setMap(true);
+                                            setLocation({
+                                                user,
+                                                latitude,
+                                                longitude,
+                                            });
+                                        }}
+                                    />
+                                ) : (
+                                    ''
+                                )}
+                            </div>
+                            <div className="text">
+                                {edit === post.id ? (
+                                    <EditText
+                                        disabled={wait}
+                                        autoFocus
+                                        value={newText}
+                                        onChange={(e) =>
+                                            setNewText(e.target.value)
+                                        }
+                                        onKeyDown={(e) =>
+                                            EndEditPost(
+                                                e,
                                                 post,
-                                                setNewText,
+                                                { text: newText },
+                                                config,
                                                 setEdit,
-                                                edit
+                                                setPosts,
+                                                posts,
+                                                setWait
                                             )
                                         }
                                     />
-                                </span>
-                            ) : null}
-                            {post.user.id === userInfo.user.id ? (
-                                <FiTrash
-                                    key={`t${post.id}`}
-                                    color="white"
-                                    onClick={() => setModal(post.id)}
-                                />
-                            ) : null}
-                        </Icons>
-                        {modal === post.id ? (
-                            <DeletePost
-                                post={post}
-                                userInfo={userInfo}
-                                attPosts={attPosts}
-                                modal={modal}
-                                setModal={setModal}
-                            />
-                        ) : null}
-                        <div className="author-name">
-                            <Link to={`/user/${post.user.id}`}>
-                                {post.user.username}
-                            </Link>
-                        </div>
-                        <div className="text">
-                            {edit === post.id ? (
-                                <EditText
-                                    disabled={wait}
-                                    autoFocus
-                                    value={newText}
-                                    onChange={(e) => setNewText(e.target.value)}
-                                    onKeyDown={(e) =>
-                                        EndEditPost(
-                                            e,
-                                            post,
-                                            { text: newText },
-                                            config,
-                                            setEdit,
-                                            setPosts,
-                                            posts,
-                                            setWait
-                                        )
-                                    }
-                                />
+                                ) : (
+                                    <HashtagText post={post} />
+                                )}
+                            </div>
+                            {post.link.includes('www.youtube.com') ? (
+                                <YTVideo>
+                                    <YouTube
+                                        className="video"
+                                        videoId={getYouTubeID(post.link)}
+                                        opts={opts}
+                                        id={post.link}
+                                    />{' '}
+                                    <a href={post.link} target="_blank">
+                                        {' '}
+                                        {post.link}
+                                    </a>
+                                </YTVideo>
                             ) : (
-                                <HashtagText post={post} />
+                                <Card post={post} />
                             )}
                         </div>
-                        {post.link.includes('www.youtube.com') ? (
-                            <YTVideo>
-                                <YouTube
-                                    className="video"
-                                    videoId={getYouTubeID(post.link)}
-                                    opts={opts}
-                                    id={post.link}
-                                />{' '}
-                                <a href={post.link} target="_blank">
-                                    {' '}
-                                    {post.link}
-                                </a>
-                            </YTVideo>
-                        ) : (
-                            <Card post={post} />
-                        )}
                     </div>
-                    <Comments
-                        showComment={showComment}
-                        userId={userInfo.user.id}
-                        id={post.id}
-                    />
-                    
-                </li></PostBox>
+                    <div
+                        hidden={
+                            comment[i] !== undefined
+                                ? !comment[i].hasClicked
+                                : true
+                        }
+                    >
+                        <Comments post={post} />
+                    </div>
+                </li>
+                </PostBox>
             );
         });
     }
@@ -184,6 +215,7 @@ export default function Posts({
 
     return (
         <PostsList>
+            {map ? <Geolocation setMap={setMap} location={location} /> : ''}
             <InfiniteScroll
                 pageStart={0}
                 loadMore={getPosts}
@@ -203,6 +235,7 @@ export default function Posts({
 const PostsList = styled.ul`
     color: white;
     font-family: 'Lato', sans-serif;
+    position: relative;
 
     svg {
         font-size: 22px;
@@ -210,11 +243,14 @@ const PostsList = styled.ul`
     }
 
     .comment-icon {
-        margin: 15px 0 0 0 ;
+        
         display: flex;
         flex-direction: column;
         align-items: center;
         width: 100%;
+        svg{
+            margin: 15px 0 0 0;
+        }
         
     }
 
@@ -232,14 +268,21 @@ const PostsList = styled.ul`
     }
 
     li {
+        margin-bottom: 30px;
+        list-style: none;
+        position: relative;
+        
+    }
+
+    .post {
         width: 611px;
         min-height: 276px;
         height: auto;
-        margin-bottom: 30px;
+        background-color: #171717;
         border-radius: 16px;
-        background-color:#171717;
         display: flex;
         position: relative;
+        z-index: 2;
     }
 
     .icons {
@@ -250,6 +293,7 @@ const PostsList = styled.ul`
 
         p {
             font-size: 11px;
+            word-break: break-all;
         }
     }
 
@@ -263,6 +307,10 @@ const PostsList = styled.ul`
 
     .author-name {
         font-size: 19px;
+        .geo-pin {
+            font-size: 16px;
+            margin-left: 5px;
+        }
     }
 
     .text {
@@ -297,7 +345,7 @@ const PostsList = styled.ul`
     }
 
     @media (max-width: 1000px) {
-        li {
+        .post {
             width: 100%;
             border-radius: 0px;
             padding: 0px 10px;

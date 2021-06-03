@@ -30,6 +30,20 @@ export default function DeletePost({ post, userInfo, attPosts, setModal }) {
 
     function remove() {
         setDisabled(true);
+        if('respostedBy' in post){
+        const request = axios.delete(
+            `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/${post.repostId}`,
+            { headers: { Authorization: `Bearer ${userInfo.token}` } }
+        );
+        request.then(() => {
+            attPosts();
+            setModal(false);
+        });
+        request.catch(() => {
+            alert('não foi possivel exlcuir o post');
+            setModal(false);
+        });
+    } else{
         const request = axios.delete(
             `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/${post.id}`,
             { headers: { Authorization: `Bearer ${userInfo.token}` } }
@@ -42,6 +56,8 @@ export default function DeletePost({ post, userInfo, attPosts, setModal }) {
             alert('não foi possivel exlcuir o post');
             setModal(false);
         });
+
+    }
     }
 }
 

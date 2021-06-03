@@ -52,7 +52,7 @@ const Confirm = styled.div`
     height: 100vh;
     background: rgba(255, 255, 255, 0.9);
     position: fixed;
-    z-index: 9999;
+    z-index: 10;
     top: 0;
     left: 0;
     display: flex;

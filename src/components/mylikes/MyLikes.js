@@ -42,8 +42,6 @@ export default function MyLikes() {
         handleGetPosts(true);
     }, [handleGetPosts]);
 
-    useInterval(handleGetPosts, 15000);
-
     const GetMorePosts = () => {
         const promise = axios.get(
             `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/liked/?olderThan=${lastPostId}`,
