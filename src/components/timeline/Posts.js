@@ -109,15 +109,6 @@ export default function Posts({
                                     />
                                 ) : null}
                             </Icons>
-                            {modal === post.id ? (
-                                <DeletePost
-                                    post={post}
-                                    userInfo={userInfo}
-                                    attPosts={attPosts}
-                                    modal={modal}
-                                    setModal={setModal}
-                                />
-                            ) : null}
                             <div className="author-name">
                                 <Link to={`/user/${post.user.id}`}>
                                     {post.user.username}
@@ -196,6 +187,15 @@ export default function Posts({
                     >
                         <Comments post={post} />
                     </div>
+                    {modal === post.id ? (
+                        <DeletePost
+                            post={post}
+                            userInfo={userInfo}
+                            attPosts={attPosts}
+                            modal={modal}
+                            setModal={setModal}
+                        />
+                    ) : null}
                 </li>
             );
         });
@@ -225,7 +225,6 @@ export default function Posts({
 const PostsList = styled.ul`
     color: white;
     font-family: 'Lato', sans-serif;
-    position: relative;
 
     svg {
         font-size: 22px;
@@ -267,7 +266,7 @@ const PostsList = styled.ul`
         border-radius: 16px;
         display: flex;
         position: relative;
-        z-index: 2;
+        z-index: 1;
     }
 
     .icons {

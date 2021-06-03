@@ -69,6 +69,7 @@ const GlobalStyle = createGlobalStyle`
         vertical-align: baseline;
         box-sizing: border-box;
         text-decoration: none;
+ 
     }
 
     body {

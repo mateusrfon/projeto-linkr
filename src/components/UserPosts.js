@@ -73,6 +73,7 @@ export default function UserPosts() {
         <Main
             posts={data}
             setPosts={setData}
+            attPosts={handleGetPosts}
             title={
                 useParams().id
                     ? data[0]

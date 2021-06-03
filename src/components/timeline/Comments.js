@@ -149,18 +149,15 @@ const Comment = styled.ul`
     &:nth-child(1) {
         padding-top: ${({ bool }) => (bool ? '140px' : '22px')};
     }
-
     .name {
         font-size: 18px;
     }
-
     li {
         height: 70px;
         width: 90%;
         margin-bottom: 0px !important;
         border-bottom: 1px solid #353535;
         display: flex;
-
         .comment-box {
             padding-top: 5px;
             display: flex;
@@ -168,7 +165,6 @@ const Comment = styled.ul`
             width: 100%;
             align-items: center;
         }
-
         .user-info {
             display: flex;
             flex-direction: row;
@@ -176,21 +172,18 @@ const Comment = styled.ul`
             width: auto;
             height: auto;
         }
-
         a {
             margin: 0 20px;
             div {
                 margin: 0;
             }
         }
-
         span {
             margin-left: 5px;
             display: list-item;
             list-style-type: disc;
             color: #565656;
         }
-
         p {
             color: #acacac;
             font-size: 20px;
@@ -202,12 +195,10 @@ const Comment = styled.ul`
             overflow: hidden;
         }
     }
-
     .input-box {
         width: 90%;
         margin-top: 83px;
     }
-
     div.input-comment {
         width: 90%;
         height: 83px;
@@ -216,7 +207,6 @@ const Comment = styled.ul`
         display: flex;
         align-items: center;
         justify-content: space-between;
-
         input {
             background-color: #252525;
             width: 85%;
@@ -228,7 +218,6 @@ const Comment = styled.ul`
             padding-left: 15px;
             border: none;
         }
-
         svg {
             position: absolute;
             right: 40px;
@@ -237,5 +226,5 @@ const Comment = styled.ul`
 `;
 
 const Container = styled.div`
-    margin-bottom: ${({ length }) => `calc(83px + ${length * 100}px)`};
+    margin-bottom: ${({ length }) => `calc(113px + ${length * 70}px)`};
 `;
