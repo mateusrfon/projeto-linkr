@@ -106,6 +106,7 @@ const Confirm = styled.div`
             border-radius: 5px;
             font-size: 18px;
             margin: 0 3vw;
+            cursor: pointer;
 
             @media (max-width: 1000px) {
                 width: 25vw;

@@ -76,6 +76,9 @@ const SearchUserBox = styled.span`
         color:#c6c6c6;
         border-radius: 8px;
         padding: 0 0 0 10px;
+        @media(max-width:1000px){
+            width: 90vw;
+        }
         
     }
     
@@ -120,6 +123,7 @@ const SearchUserBox = styled.span`
         top: 82px;
         left:5vw;
         right: 5vw;
+        
     }
 `
 const LenIcon = styled.div`
