@@ -40,7 +40,7 @@ export default function Main(props) {
 
 const Page = styled.main`
     background-color: #4d4d4d;
-    min-width: 100vw;
+    width: 100vw;
     min-height: 100vh;
     margin-top: 72px;
     display: flex;
@@ -53,7 +53,7 @@ const Page = styled.main`
 
     > div {
         display: flex;
-        width: 60%;
+        width: 937px;
     }
 
     @media (max-width: 1000px) {
