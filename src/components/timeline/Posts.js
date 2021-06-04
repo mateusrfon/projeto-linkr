@@ -213,7 +213,7 @@ export default function Posts({
                             setModal={setModal}
                         />
                     ) : null}
-                    {shareModal === post.repostId || (shareModal === post.id && post.repostId === undefined)? <Repost post={post} userInfo={userInfo} attPosts={attPosts} shareModal={shareModal} setShareModal={setShareModal}/>:null}
+                    {(shareModal === post.repostId && shareModal !==post.id) || (shareModal === post.id && post.repostId === undefined)? <Repost post={post} userInfo={userInfo} attPosts={attPosts} shareModal={shareModal} setShareModal={setShareModal}/>:null}
                 </li>
                 </PostBox>
             );
@@ -359,7 +359,7 @@ const PostsList = styled.ul`
             padding: 0px 10px;
         }
 
-        button {
+        &&>button {
             width: 100%;
             min-height: 180px;
         }
