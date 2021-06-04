@@ -52,7 +52,7 @@ const Confirm = styled.div`
     height: 100vh;
     background: rgba(255, 255, 255, 0.9);
     position: fixed;
-    z-index: 10;
+    z-index: 99999;
     top: 0;
     left: 0;
     display: flex;
@@ -94,10 +94,12 @@ const Confirm = styled.div`
             border-radius: 5px;
             font-size: 18px;
             margin: 0 3vw;
+            cursor: pointer;
 
             @media (max-width: 1000px) {
                 width: 25vw;
                 height: 6vh;
+                
             }
         }
     }
@@ -105,6 +107,7 @@ const Confirm = styled.div`
 const Yes = styled.button`
     background-color: ${(props) => (props.disabled ? '#0867h2' : '#1877F2')};
     color: #fff;
+    
 `;
 const No = styled.button`
     background-color: ${(props) => (props.disabled ? '#141414' : '#fffff')};
