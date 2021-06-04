@@ -5,7 +5,6 @@ import UserContext from '../contexts/UserContext';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import LocalLogin from './login/LocalLogin';
-import useInterval from 'react-useinterval';
 let lastPostId;
 
 export default function UserPosts() {
@@ -14,12 +13,28 @@ export default function UserPosts() {
     const [isLoading, setIsLoading] = useState(false);
     const { userInfo } = useContext(UserContext);
     const id = useParams().id || userInfo.user.id;
+    const [user, setUser] = useState(false);
 
+    const config = {
+        headers: {
+            Authorization: `Bearer ${userInfo.token}`
+        }
+    };
+    
     if (useParams().id) {
         LocalLogin(`/user/${id}`);
     } else {
         LocalLogin('/my-posts');
     }
+
+    useEffect(() => {
+        if (userInfo.token !== '') {
+            const request = axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/users/${id}`, config);
+            request.then(r => {
+                setUser(r.data.user.username);
+            });
+        }
+    }, [userInfo.token, id]);
 
     const handleGetPosts = useCallback(
         (isFirstTime) => {
@@ -28,45 +43,43 @@ export default function UserPosts() {
             }
             const promise = axios.get(
                 `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/users/${id}/posts`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${userInfo.token}`,
-                    },
-                }
+                config
             );
-            promise.then((response) => {
+            promise.then(response => {
+                const posts = response.data.posts
                 setIsLoading(false);
-                lastPostId =
-                    response.data.posts[response.data.posts.length - 1].id;
-                setData(response.data.posts);
+                if (posts.length > 0) {
+                    lastPostId = posts[posts.length - 1].id;
+                }
+                setData(posts);
             });
         },
         [id, userInfo.token]
     );
 
     useEffect(() => {
-        handleGetPosts(true);
-    }, [handleGetPosts]);
+        if (userInfo.token !== '') {
+            handleGetPosts(true);
+        }
+    }, [handleGetPosts, userInfo.token]);
 
     const GetMorePosts = () => {
-        const promise = axios.get(
-            `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/users/${id}/posts/?olderThan=${lastPostId}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${userInfo.token}`,
-                },
-            }
-        );
-        promise.then((response) => {
-            if (response.data.posts.length) {
-                let newPosts = [...data, ...response.data.posts];
-                lastPostId =
-                    response.data.posts[response.data.posts.length - 1].id;
-                setData(newPosts);
-            } else {
-                setHasMore(false);
-            }
-        });
+        if (userInfo.token !== '') {
+            const promise = axios.get(
+                `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/users/${id}/posts/?olderThan=${lastPostId}`,
+                config
+            );
+            promise.then((response) => {
+                const posts = response.data.posts;
+                if (posts.length > 0) {
+                    const newPosts = [...data, ...posts];
+                    lastPostId = posts[posts.length - 1].id;
+                    setData(newPosts);
+                } else {
+                    setHasMore(false);
+                }
+            });
+        }
     };
 
     return (
@@ -75,8 +88,8 @@ export default function UserPosts() {
             setPosts={setData}
             title={
                 useParams().id
-                    ? data[0]
-                        ? data[0].user.username + '`s posts'
+                    ? user
+                        ? user + '`s posts'
                         : 'carregando'
                     : 'my posts'
             }

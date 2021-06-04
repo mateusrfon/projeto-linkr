@@ -20,7 +20,7 @@ export default function Title(props) {
     };
 
     useEffect(() => {
-        if (id !== undefined) {
+        if ((id !== undefined) && (userInfo.token !== '')) {
             const request = axios.get(
                 'https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/users/follows',
                 config
@@ -35,9 +35,9 @@ export default function Title(props) {
     return (
         <TitlePage>
             <User>
-                {id === undefined || title === 'carregando' ? null : (
-                    <img src={avatar} alt="user" />
-                )}
+                {(id === undefined || title === 'carregando' || avatar === '')
+                    ? null 
+                    : <img src={avatar} alt="user" />}
                 <h1>{title}</h1>
             </User>
             {id === undefined ||
