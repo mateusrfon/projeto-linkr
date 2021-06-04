@@ -1,10 +1,10 @@
-import { newTab } from './utils';
 import styled from 'styled-components';
 import LinkPage from './LinkPage';
-import { useState } from 'react';
+import { useContext } from 'react';
+import LinkContext from '../../contexts/LinkContext';
 
 export default function Card({ post }) {
-    const [iframe, setIframe] = useState(false);
+    const { setLink } = useContext(LinkContext);
 
     return (
         <>
@@ -12,16 +12,13 @@ export default function Card({ post }) {
                 key={post.id}
                 img={post.linkImage}
                 onClick={() => {
-                    setIframe(true);
+                    setLink({ link: post.link, display: true });
                 }}
             >
                 <div className="link-title">{post.linkTitle}</div>
                 <div className="description">{post.linkDescription}</div>
                 <div className="url">{post.link}</div>
-            </Button>
-            {iframe 
-            ? <LinkPage link={post.link} iframe={iframe} setIframe={setIframe} />
-            : ''}    
+            </Button>  
         </>
     );
 }

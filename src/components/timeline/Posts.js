@@ -20,6 +20,8 @@ import Comments from './Comments';
 import { AiOutlineComment } from 'react-icons/ai';
 import {BiRepost} from 'react-icons/bi'
 import Repost from './Repost';
+import LinkContext from '../../contexts/LinkContext';
+import LinkPage from './LinkPage';
 
 export default function Posts({
     posts,
@@ -38,6 +40,7 @@ export default function Posts({
     const [map, setMap] = useState(false);
     const [location, setLocation] = useState('');
     const [comment, setComment] = useState([]);
+    const [link, setLink] = useState({ link: '', display: false });
 
     const opts = {
         playerVars: {
@@ -223,21 +226,24 @@ export default function Posts({
     pushItems();
 
     return (
-        <PostsList>
-            {map ? <Geolocation setMap={setMap} location={location} /> : ''}
-            <InfiniteScroll
-                pageStart={0}
-                loadMore={getPosts}
-                hasMore={hasMore}
-                loader={
-                    <div className="loader" key={0}>
-                        Loading ...
-                    </div>
-                }
-            >
-                {items}
-            </InfiniteScroll>
-        </PostsList>
+        <LinkContext.Provider value={{ link, setLink }}>
+            <PostsList>
+                {map ? <Geolocation setMap={setMap} location={location} /> : ''}
+                <InfiniteScroll
+                    pageStart={0}
+                    loadMore={getPosts}
+                    hasMore={hasMore}
+                    loader={
+                        <div className="loader" key={0}>
+                            Loading ...
+                        </div>
+                    }
+                >
+                    {items}
+                </InfiniteScroll>
+            </PostsList>
+            <LinkPage />
+        </LinkContext.Provider>
     );
 }
 
