@@ -35,7 +35,7 @@ const Button = styled.button`
     border: 1px solid #4d4d4d;
     height: auto;
     min-height: 155px;
-    width: 90%;
+    width: 80%;
     max-height: 10ch;
     background-image: ${({ img }) => `url(${img})`};
     background-repeat: no-repeat;
