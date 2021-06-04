@@ -7,12 +7,12 @@ import Follow from './Follow';
 
 export default function Title(props) {
     const id = useParams().id;
-    const { title, posts } = props;
-    const { avatar } = posts[0] ? posts[0].user : { id: '', avatar: '' };
+    const { title } = props;
+    const [avatar, setAvatar] = useState('');
     const { userInfo } = useContext(UserContext);
     const [follow, setFollow] = useState(false);
     const [wait, setWait] = useState(false);
-
+    
     const config = {
         headers: {
             Authorization: `Bearer ${userInfo.token}`,
@@ -21,46 +21,49 @@ export default function Title(props) {
 
     useEffect(() => {
         if ((id !== undefined) && (userInfo.token !== '')) {
-            const request = axios.get(
+            const userRequest = axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/users/${id}`, config);
+            userRequest.then(r => {
+                setAvatar(r.data.user.avatar);
+            });
+            const followsRequest = axios.get(
                 'https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/users/follows',
                 config
             );
-            request.then((r) => {
+            followsRequest.then((r) => {
                 const data = r.data.users.map((e) => e.id);
                 setFollow(data.includes(Number(id)));
             });
         }
-    }, [id]);
+    }, [userInfo.token, id]);
 
     return (
         <TitlePage>
             <User>
-                {(id === undefined || title === 'carregando' || avatar === '')
+                {(id === undefined || title === 'carregando')
                     ? null 
                     : <img src={avatar} alt="user" />}
                 <h1>{title}</h1>
             </User>
-            {id === undefined ||
-            title === 'carregando' ||
-            userInfo.user.id === Number(id) ? null : follow ? (
-                <UnfollowBtn
-                    disabled={wait}
-                    onClick={() =>
-                        Follow(id, false, setWait, setFollow, userInfo.token)
-                    }
-                >
-                    Unfollow
-                </UnfollowBtn>
-            ) : (
-                <FollowBtn
-                    disabled={wait}
-                    onClick={() =>
-                        Follow(id, true, setWait, setFollow, userInfo.token)
-                    }
-                >
-                    Follow
-                </FollowBtn>
-            )}
+            {(id === undefined || title === 'carregando' || userInfo.user.id === Number(id))
+                ? null 
+                : follow 
+                    ? (<UnfollowBtn
+                        disabled={wait}
+                        onClick={() =>
+                            Follow(id, false, setWait, setFollow, userInfo.token)
+                        }
+                    >
+                        Unfollow
+                    </UnfollowBtn>)
+                    : (<FollowBtn
+                        disabled={wait}
+                        onClick={() =>
+                            Follow(id, true, setWait, setFollow, userInfo.token)
+                        }
+                    >
+                        Follow
+                    </FollowBtn>)
+            }
         </TitlePage>
     );
 }
