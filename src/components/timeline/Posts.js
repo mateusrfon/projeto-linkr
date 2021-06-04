@@ -18,6 +18,8 @@ import { IoLocationSharp } from 'react-icons/io5';
 import Geolocation from './map/Geolocation';
 import Comments from './Comments';
 import { AiOutlineComment } from 'react-icons/ai';
+import {BiRepost} from 'react-icons/bi'
+import Repost from './Repost';
 
 export default function Posts({
     posts,
@@ -29,6 +31,7 @@ export default function Posts({
 }) {
     const { userInfo } = useContext(UserContext);
     const [modal, setModal] = useState(false);
+    const [shareModal, setShareModal] = useState(false);
     const [edit, setEdit] = useState(false);
     const [newText, setNewText] = useState('');
     const [wait, setWait] = useState(false);
@@ -61,7 +64,10 @@ export default function Posts({
 
     function pushItems() {
         posts.map((post, i) => {
+            
             items.push(
+                <PostBox>
+                    {post.repostCount>0 && post.repostedBy!== undefined? <div><BiRepost/> Re-posted by <b>{post.repostedBy.username}</b></div>:null}
                 <li key={post.id}>
                     <div className="post">
                         <div className="icons">
@@ -83,6 +89,9 @@ export default function Posts({
                                     }}
                                 />
                                 <p>{post.commentCount} comments</p>
+                                <BiRepost key={`r${post.id}`}onClick={()=>setShareModal('repostedBy' in post? post.repostId:post.id)}/>
+                            {shareModal === post.repostId || (shareModal === post.id && post.repostId === undefined)? <Repost post={post} userInfo={userInfo} attPosts={attPosts} shareModal={shareModal} setShareModal={setShareModal}/>:null}
+                            <p>{'repostCount' in post? post.repostCount:"0"} shares</p>
                             </div>
                         </div>
                         <div className="post-infos">
@@ -102,14 +111,14 @@ export default function Posts({
                                         />
                                     </span>
                                 ) : null}
-                                {post.user.id === userInfo.user.id ? (
+                                {post.user.id === userInfo.user.id? (
                                     <FiTrash
                                         color="white"
                                         onClick={() => setModal(post.id)}
                                     />
                                 ) : null}
                             </Icons>
-                            {modal === post.id ? (
+                            {modal === post.repostId || (modal === post.id && post.repostId === undefined) ? (
                                 <DeletePost
                                     post={post}
                                     userInfo={userInfo}
@@ -117,7 +126,7 @@ export default function Posts({
                                     modal={modal}
                                     setModal={setModal}
                                 />
-                            ) : null}
+                            ) :null}
                             <div className="author-name">
                                 <Link to={`/user/${post.user.id}`}>
                                     {post.user.username}
@@ -196,7 +205,17 @@ export default function Posts({
                     >
                         <Comments post={post} />
                     </div>
+                    {modal === post.id ? (
+                        <DeletePost
+                            post={post}
+                            userInfo={userInfo}
+                            attPosts={attPosts}
+                            modal={modal}
+                            setModal={setModal}
+                        />
+                    ) : null}
                 </li>
+                </PostBox>
             );
         });
     }
@@ -225,7 +244,6 @@ export default function Posts({
 const PostsList = styled.ul`
     color: white;
     font-family: 'Lato', sans-serif;
-    position: relative;
 
     svg {
         font-size: 22px;
@@ -233,11 +251,15 @@ const PostsList = styled.ul`
     }
 
     .comment-icon {
-        margin-top: 15px;
+        
         display: flex;
         flex-direction: column;
         align-items: center;
         width: 100%;
+        svg{
+            margin: 15px 0 0 0;
+        }
+        
     }
 
     .user-icon {
@@ -257,6 +279,7 @@ const PostsList = styled.ul`
         margin-bottom: 30px;
         list-style: none;
         position: relative;
+        
     }
 
     .post {
@@ -267,7 +290,7 @@ const PostsList = styled.ul`
         border-radius: 16px;
         display: flex;
         position: relative;
-        z-index: 2;
+        z-index: 1;
     }
 
     .icons {
@@ -391,3 +414,30 @@ const YTVideo = styled.div`
         }
     }
 `;
+
+const PostBox = styled.div`
+    margin: 0 0 ;
+    background-color: #1e1e1e;
+    border-radius: 16px;
+
+    &&>div{
+    height: 33px;
+    width: 100%;
+    background-color: #1e1e1e;
+    border-radius: 16px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    b{
+        font-weight: bolder;
+        margin: 0 0 0 3px;
+    }
+     svg{
+        cursor:default;
+        margin: 0 4px 0 0;
+    }
+    }
+`
+
+

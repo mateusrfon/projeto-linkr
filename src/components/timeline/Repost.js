@@ -1,26 +1,29 @@
-import axios from 'axios';
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import styled from "styled-components";
 
-export default function DeletePost({ post, userInfo, attPosts, setModal }) {
+
+
+export default function Repost({post,userInfo,attPosts,shareModal,setShareModal}){
     const [disabled, setDisabled] = useState(false);
 
     return (
         <>
-            <Confirm onClick={() => setModal(false)}>
+            <Confirm onClick={() => setShareModal(false)}>
+                
                 <div>
                     <h1>
                         {disabled
-                            ? 'Deletando post'
-                            : 'Tem certeza que deseja excluir essa publicação?'}
+                            ? 'Compartilhando post'
+                            : 'Tem certeza que deseja compartilhar essa publicação?'}
                     </h1>
                     <span>
-                        <No disabled={disabled} onClick={() => setModal(false)}>
+                        <No disabled={disabled} onClick={() => setShareModal(false)}>
                             Não, voltar
                         </No>
-                        <Yes disabled={disabled} onClick={() => remove()}>
+                        <Yes disabled={disabled} onClick={() => share()}>
                             {' '}
-                            Sim, excluir{' '}
+                            Sim, repostar{' '}
                         </Yes>
                     </span>
                 </div>
@@ -28,37 +31,20 @@ export default function DeletePost({ post, userInfo, attPosts, setModal }) {
         </>
     );
 
-    function remove() {
+    function share(){
         setDisabled(true);
-        if('respostedBy' in post){
-        const request = axios.delete(
-            `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/${post.repostId}`,
-            { headers: { Authorization: `Bearer ${userInfo.token}` } }
-        );
-        request.then(() => {
-            attPosts();
-            setModal(false);
-        });
-        request.catch(() => {
-            alert('não foi possivel exlcuir o post');
-            setModal(false);
-        });
-    } else{
-        const request = axios.delete(
-            `https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/${post.id}`,
-            { headers: { Authorization: `Bearer ${userInfo.token}` } }
-        );
-        request.then(() => {
-            attPosts();
-            setModal(false);
-        });
-        request.catch(() => {
-            alert('não foi possivel exlcuir o post');
-            setModal(false);
-        });
+      
+        
+            const request = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/linkr/posts/${post.id}/share`,null,  { headers: { Authorization: `Bearer ${userInfo.token}` } })
+            request.then(promise => {
+                attPosts();
+                setShareModal(false);
+            })
+            request.catch(error => {alert('não foi possivel compartilhar o post');
+                setShareModal(false);})
 
-    }
-    }
+
+}
 }
 
 const Confirm = styled.div`
@@ -66,7 +52,7 @@ const Confirm = styled.div`
     height: 100vh;
     background: rgba(255, 255, 255, 0.9);
     position: fixed;
-    z-index: 9999;
+    z-index: 10;
     top: 0;
     left: 0;
     display: flex;
@@ -82,6 +68,7 @@ const Confirm = styled.div`
         flex-direction: column;
         justify-content: space-around;
         align-items: center;
+        text-align: center;
         box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);
         @media (max-width: 1000px) {
             width: 90vw;
@@ -94,6 +81,7 @@ const Confirm = styled.div`
         h1 {
             color: #fff;
             font-size: 34px;
+            
 
             @media (max-width: 1000px) {
                 font-size: 20px;

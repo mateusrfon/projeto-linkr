@@ -100,7 +100,7 @@ export default function Timeline() {
             }
         });
     };
-
+    console.log(handleGetPosts);
     return (
         <Main
             posts={data}

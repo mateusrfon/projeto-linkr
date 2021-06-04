@@ -77,6 +77,7 @@ export default function Hashtags() {
             title={`# ${hashtag}`}
             loading={isLoading}
             getPosts={GetMorePosts}
+            attPosts={handleGetPosts}
             hasMore={hasMore}
         />
     ) : (
@@ -86,6 +87,7 @@ export default function Hashtags() {
             title={`# ${hashtag}`}
             loading={isLoading}
             getPosts={GetMorePosts}
+            attPosts={handleGetPosts}
             hasMore={hasMore}
         />
     );

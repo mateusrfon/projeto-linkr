@@ -70,6 +70,7 @@ export default function MyLikes() {
             title={`my likes`}
             loading={isLoading}
             getPosts={GetMorePosts}
+            attPosts={handleGetPosts}
             hasMore={hasMore}
         />
     );
