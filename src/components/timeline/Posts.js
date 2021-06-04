@@ -90,7 +90,6 @@ export default function Posts({
                                 />
                                 <p>{post.commentCount} comments</p>
                                 <BiRepost key={`r${post.id}`}onClick={()=>setShareModal('repostedBy' in post? post.repostId:post.id)}/>
-                            {shareModal === post.repostId || (shareModal === post.id && post.repostId === undefined)? <Repost post={post} userInfo={userInfo} attPosts={attPosts} shareModal={shareModal} setShareModal={setShareModal}/>:null}
                             <p>{'repostCount' in post? post.repostCount:"0"} shares</p>
                             </div>
                         </div>
@@ -214,6 +213,7 @@ export default function Posts({
                             setModal={setModal}
                         />
                     ) : null}
+                    {shareModal === post.repostId || (shareModal === post.id && post.repostId === undefined)? <Repost post={post} userInfo={userInfo} attPosts={attPosts} shareModal={shareModal} setShareModal={setShareModal}/>:null}
                 </li>
                 </PostBox>
             );
