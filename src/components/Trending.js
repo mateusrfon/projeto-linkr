@@ -66,7 +66,7 @@ const Container = styled.div`
     width: 100%;
 
     aside {
-        @media (max-width: 1275px) {
+        @media (max-width: 1000px) {
             width: 150px;
             margin-left: 120px;
             height: 455px;
@@ -107,7 +107,7 @@ const Aside = styled.aside`
                     
                 }
             
-            @media(max-width:1275px){
+            @media(max-width:1000px){
                 
                 input{
                     width:135px;
